@@ -1,0 +1,84 @@
+plugin.Tx_Formhandler.settings.predef {
+
+	formhandler_subscription_request_subscription {
+
+		addErrorAnchors = 0
+
+		isErrorMarker {
+			default = error
+			global (
+				<div class="error">
+					<strong>Fehler</strong><br />
+					Es wurden nicht alle erforderlichen Felder ausgefüllt oder
+					eine Ihrer Eingaben war fehlerhaft.<br />
+					Bitte prüfen Sie Ihre Angaben.
+				</div><br />
+			)
+		}
+
+	}
+
+	formhandler_subscription_confirm_subscription < .formhandler_subscription_request_subscription
+	formhandler_subscription_request_modification < .formhandler_subscription_request_subscription
+	formhandler_subscription_modify_subscription < .formhandler_subscription_request_subscription
+
+	formhandler_subscription_request_subscription {
+
+		name = Subscribe
+		formValuesPrefix = tx_formhandler_requestsubscription
+
+		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
+		langFile.1 = EXT:formhandler_subscription/Resources/Language/RequestSubscription.xml
+
+		validators {
+			1.class = Tx_Formhandler_Validator_Default
+			1.config.fieldConf {
+				gender.errorCheck.1 = required
+				first_name.errorCheck.1 = required
+				last_name.errorCheck.1 = required
+				email.errorCheck.1 = required
+				email.errorCheck.2 = email
+			}
+		}
+	}
+
+
+	formhandler_subscription_confirm_subscription {
+
+		name = Subscribe Confirmation
+
+		templateFile = EXT:formhandler_subscription/Resources/Templates/ConfirmSubscription.html
+	}
+
+
+	formhandler_subscription_request_modification {
+
+		name = Subscription Modification Request
+
+		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestModification.html
+
+		validators {
+			1.class = Tx_Formhandler_Validator_Default
+			1.config.fieldConf {
+				email.errorCheck.1 = required
+				email.errorCheck.2 = email
+			}
+		}
+
+		finishers {
+			2 {
+				class = Tx_Formhandler_Finisher_SubmittedOK
+				config.returns = 1
+			}
+		}
+	}
+
+
+	formhandler_subscription_modify_subscription {
+
+		name = Subscription Modification Form
+
+		templateFile = EXT:formhandler_subscription/Resources/Templates/ModifySubscription.html
+	}
+
+}

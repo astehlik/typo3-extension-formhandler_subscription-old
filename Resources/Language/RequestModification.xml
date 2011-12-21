@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="legend_contact_data">How can we respond to you?</label>
+			<label index="firstname">Firstname</label>
+			<label index="lastname">Lastname</label>
+			<label index="email">E-Mail</label>
+			<label index="legend_message">Your message for us</label>
+			<label index="message">Message</label>
+			<label index="legend_submit">Submit message</label>
+			<label index="submit">Send</label>
+			<label index="error_firstname_required">Firstname is missing.</label>
+			<label index="error_email_required">Enter your E-mail address.</label>
+			<label index="error_email_email">E-mail address must be valid syntax.</label>
+			<label index="error_message_required">Please enter the message you would like to submit.</label>
+			<label index="required_fields">Fields marked with * are required.</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="legend_contact_data">Wie können wir Ihnen antworten?</label>
+			<label index="firstname">Vorname</label>
+			<label index="lastname">Nachname</label>
+			<label index="email">E-Mail</label>
+			<label index="legend_message">Ihre Nachricht an uns</label>
+			<label index="message">Nachricht</label>
+			<label index="legend_submit">Nachricht absenden</label>
+			<label index="submit">Absenden</label>
+			<label index="error_firstname_required">Bitte geben Sie Ihren Vornamen an.</label>
+			<label index="error_email_required">Bitte geben Sie Ihre E-Mail-Adresse an.</label>
+			<label index="error_email_email">Die angegebene E-Mail-Adresse hat ein ungültiges Format.</label>
+			<label index="error_message_required">Bitte geben Sie die Nachricht ein, die Sie übermitteln möchten.</label>
+			<label index="required_fields">Bitte füllen Sie alle mit * markierte Felder aus.</label>
+		</languageKey>
+	</data>
+</T3locallang>

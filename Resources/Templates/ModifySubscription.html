@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Request subscription modification</title>
+</head>
+<body>
+
+<!-- ###TEMPLATE_FORM1### begin -->
+<div id="tx_formhandler_subscription_requestmodification">
+
+	<h2>###LLL:modify_subscription_header###</h2>
+
+	<p>###LLL:modify_subscription_info###</p>
+
+	<form id="tx_formhandler_subscription_requestmodification_form" method="post" action="###REL_URL###" enctype="multipart/form-data" class="yform">
+
+		###is_error###
+
+		<fieldset>
+
+			<legend>###LLL:modify_subscription_legend###</legend>
+
+			<div class="type-text">
+				<div class="csc-mailform-field type-text ###is_error_email###">
+					###error_email###
+					<label for="tx_formhandler_contact_email">###LLL:email### ###required_email###</label>
+					<input type="text" name="tx_formhandler_contact[email]" id="tx_formhandler_contact_email" value="###value_email###"/>
+				</div>
+			</div>
+
+			<div class="csc-mailform-field type-button">
+				<p>###LLL:required_fields###</p>
+				<input type="submit" value="###LLL:submit###" ###submit_nextStep###/>
+			</div>
+
+		</fieldset>
+
+	</form>
+
+</div>
+<!-- ###TEMPLATE_FORM1### end -->
+
+
+<!-- ###TEMPLATE_SUBMITTEDOK### begin -->
+<h2>>###LLL:modify_subscription_submitted_header###</h2>
+<p>>###LLL:modify_subscription_submitted_message###</p>
+<!-- ###TEMPLATE_SUBMITTEDOK### end -->
+
+</body>
+</html>
