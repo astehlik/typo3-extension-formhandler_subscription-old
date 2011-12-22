@@ -3,6 +3,11 @@ plugin.Tx_Formhandler.settings.predef {
 	formhandler_subscription_request_subscription {
 
 		addErrorAnchors = 0
+		debug = 1
+
+		additionalIncludePaths {
+			1 = EXT:formhandler_subscription/Classes/Finisher
+		}
 
 		isErrorMarker {
 			default = error
@@ -38,6 +43,50 @@ plugin.Tx_Formhandler.settings.predef {
 				last_name.errorCheck.1 = required
 				email.errorCheck.1 = required
 				email.errorCheck.2 = email
+			}
+		}
+
+		finishers {
+
+			1.class = Tx_FormhandlerSubscription_Finisher_Subscribe
+			1.config {
+
+				returns = 1
+
+				table = tt_address
+
+				setTemplateSuffix = 1
+
+				checkExistenceWhere = TEXT
+				checkExistenceWhere.value = email='{GP:tx_formhandler_requestsubscription|email}' AND pid=36 AND deleted=0
+				checkExistenceWhere.insertData = 1
+
+				checkConfirmedWhere = TEXT
+				checkConfirmedWhere.value = email='{GP:tx_formhandler_requestsubscription|email}' AND pid=36 AND hidden=0 AND deleted=0
+				checkConfirmedWhere.insertData = 1
+
+				finishersNewSubscriber {
+
+					10.class = Tx_Formhandler_Finisher_SubmittedOK
+					10.config.returns = 1
+
+				}
+
+				finishersExistingUnconfirmedSubscriber {
+
+					10.class = Tx_Formhandler_Finisher_SubmittedOK
+					10.config.returns = 1
+
+				}
+
+				finishersExistingConfirmedSubscriber {
+
+					10.class = Tx_Formhandler_Finisher_SubmittedOK
+					10.config.returns = 1
+
+				}
+
+
 			}
 		}
 	}
