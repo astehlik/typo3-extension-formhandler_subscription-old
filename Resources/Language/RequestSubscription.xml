@@ -17,7 +17,6 @@
 			<label index="required_fields">Fields marked with * are required.</label>
 		</languageKey>
 		<languageKey index="de" type="array">
-			<label index="requestsubscription_info">Bitte füllen Sie das folgende Formular aus, um sich für unseren Newsletter anzumelden.</label>
 			<label index="gender">Anrede</label>
 			<label index="gender_male">Herr</label>
 			<label index="gender_female">Frau</label>

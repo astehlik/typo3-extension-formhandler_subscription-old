@@ -51,43 +51,63 @@ plugin.Tx_Formhandler.settings.predef {
 			1.class = Tx_FormhandlerSubscription_Finisher_Subscribe
 			1.config {
 
-				returns = 1
-
-				table = tt_address
+				subscribersTable = {$plugin.formhandler_subscription.subscribersTable}
 
 				setTemplateSuffix = 1
 
-				checkExistenceWhere = TEXT
-				checkExistenceWhere.value = email='{GP:tx_formhandler_requestsubscription|email}' AND pid=36 AND deleted=0
-				checkExistenceWhere.insertData = 1
+				checkConfirmedSelect.pidInList = {$plugin.formhandler_subscription.subscriberRecordsPID}
+				checkConfirmedSelect.markers.email.data = GP:tx_formhandler_requestsubscription|email
+				checkConfirmedSelect.where = email=###email###
 
-				checkConfirmedWhere = TEXT
-				checkConfirmedWhere.value = email='{GP:tx_formhandler_requestsubscription|email}' AND pid=36 AND hidden=0 AND deleted=0
-				checkConfirmedWhere.insertData = 1
+				checkExistenceSelect < .checkConfirmedSelect
+				checkExistenceSelect.showHidden = 1
 
 				finishersNewSubscriber {
 
-					10.class = Tx_Formhandler_Finisher_SubmittedOK
-					10.config.returns = 1
+					10.class = Tx_Formhandler_Finisher_AutoDB
+					10.config {
+						table = {$plugin.formhandler_subscription.subscribersTable}
 
+						10.fields {
+							hidden = 1
+							pid = {$plugin.formhandler_subscription.newSubscriberRecordsPID}
+						}
+					}
+
+					20.class = Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB
+					20.config {
+						table = {$plugin.formhandler_subscription.subscribersTable}
+						selectFields = uid,email
+						authCodePage = {$plugin.formhandler_subscription.confirmSubscriptionPID}
+					}
+
+					30.class = Tx_Formhandler_Finisher_Mail
+					30.config.mailer.class = Tx_FormhandlerSubscription_Mailer_TYPO3Mailer
+					30.config.user {
+						subject = Ihre Newsletter Anmeldung
+						sender_email = no-reply@swebhosting.de
+						sender_name = Newsletter
+						to_name = TEXT
+						to_name.value = {GP:tx_formhandler_requestsubscription|first_name} {GP:tx_formhandler_requestsubscription|last_name}
+						to_name.insertData = 1
+						to_email = TEXT
+						to_email.value = {GP:tx_formhandler_requestsubscription|email}
+						to_email.insertData = 1
+					}
 				}
 
-				finishersExistingUnconfirmedSubscriber {
-
-					10.class = Tx_Formhandler_Finisher_SubmittedOK
-					10.config.returns = 1
-
-				}
+				finishersExistingUnconfirmedSubscriber < .finishersNewSubscriber
+				finishersExistingUnconfirmedSubscriber.10 >
 
 				finishersExistingConfirmedSubscriber {
 
-					10.class = Tx_Formhandler_Finisher_SubmittedOK
-					10.config.returns = 1
 
 				}
-
-
 			}
+
+			#10.class = Tx_Formhandler_Finisher_Redirect
+			#10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
+
 		}
 	}
 
@@ -105,6 +125,7 @@ plugin.Tx_Formhandler.settings.predef {
 		name = Subscription Modification Request
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestModification.html
+		langFile.1 = EXT:formhandler_subscription/Resources/Language/RequestModification.xml
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -115,6 +136,9 @@ plugin.Tx_Formhandler.settings.predef {
 		}
 
 		finishers {
+
+			1 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.finishers.1
+
 			2 {
 				class = Tx_Formhandler_Finisher_SubmittedOK
 				config.returns = 1

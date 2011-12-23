@@ -10,8 +10,6 @@
 
 <div class="tx-formhandler-subscription tx-formhandler-subscription-requestsubscription">
 
-	<p>###LLL:requestsubscription_info###</p>
-
 	<form method="post" action="###REL_URL###" enctype="multipart/form-data" class="yform">
 
 		###is_error###
@@ -62,7 +60,7 @@
 			<div class="csc-mailform-field type-text ###is_error_email###">
 				###error_email###
 				<label for="tx_formhandler_requestsubscription_email">###LLL:email### ###required_email###</label>
-				<input type="text" name="tx_formhandler_requestsubscription[email]" id="tx_formhandler_requestsubscription_email" value="###value_firstname###"/>
+				<input type="text" name="tx_formhandler_requestsubscription[email]" id="tx_formhandler_requestsubscription_email" value="###value_email###"/>
 			</div>
 
 		</fieldset>
@@ -81,17 +79,38 @@
 
 <!-- ###TEMPLATE_FORM1### end -->
 
-<!-- ###TEMPLATE_SUBMITTEDOK_NEW_SUBSCRIBER### begin -->
-<p>You are a new subscriber.</p>
-<!-- ###TEMPLATE_SUBMITTEDOK_NEW_SUBSCRIBER### end -->
 
-<!-- ###TEMPLATE_SUBMITTEDOK_CONFIRMED_SUBSCRIBER### begin -->
-<p>You already have a confirmed subscription.</p>
-<!-- ###TEMPLATE_SUBMITTEDOK_CONFIRMED_SUBSCRIBER### end -->
+<!-- ###TEMPLATE_SUBMITTEDOK### begin -->
+###LLL:submitted_ok###
+<!-- ###TEMPLATE_SUBMITTEDOK### end -->
 
-<!-- ###TEMPLATE_SUBMITTEDOK_UNCONFIRMED_SUBSCRIBER### begin -->
-<p>You already have an unconfirmed subscription.</p>
-<!-- ###TEMPLATE_SUBMITTEDOK_UNCONFIRMED_SUBSCRIBER### end -->
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrl###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrl###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### end -->
 
 
 </body>
