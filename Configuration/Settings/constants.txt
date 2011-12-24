@@ -11,6 +11,9 @@ plugin.formhandler_subscription {
 		# cat=plugin.formhandler_subscription; type=int+; label=ID of the page where will be redirected to after successfully filling out the registration form
 	subscribeSuccessPID = 98
 
+		# cat=plugin.formhandler_subscription; type=int+; label=ID of the page where the user can confirm his subscription
 	confirmSubscriptionPID = 97
+
+	authCodeInvalidPID = 101
 
 }

@@ -21,6 +21,8 @@
  */
 class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formhandler_PreProcessor_ValidateAuthCode {
 
+	protected $get;
+
 	/**
 	 * The main method called by the controller
 	 *
@@ -30,8 +32,18 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 
 		try {
 
-			$authCode = trim($this->gp['authCode']);
+				// We need to use the global GET variables because if
+				// the form is not submitted $this->gp will be empty
+				// because Tx_Formhandler_Controller_Form::reset
+				// is called
+			$formValuesPrefix = $this->globals->getFormValuesPrefix();
+			if (empty($formValuesPrefix)) {
+				$this->get = t3lib_div::_GET();
+			} else {
+				$this->get = t3lib_div::_GET($formValuesPrefix);
+			}
 
+			$authCode = $this->get['authCode'];
 			if (!strlen($authCode)) {
 				if (intval($this->settings['authCodeRequired'])) {
 					$this->utilityFuncs->throwException('validateauthcode_insufficient_params');

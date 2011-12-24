@@ -7,6 +7,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		additionalIncludePaths {
 			1 = EXT:formhandler_subscription/Classes/Finisher
+			2 = EXT:formhandler_subscription/Classes/PreProcessor
 		}
 
 		isErrorMarker {
@@ -83,6 +84,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 					30.class = Tx_Formhandler_Finisher_Mail
 					30.config.mailer.class = Tx_FormhandlerSubscription_Mailer_TYPO3Mailer
+					30.config.view = Tx_FormhandlerSubscription_View_AuthCodeMail
 					30.config.user {
 						subject = Ihre Newsletter Anmeldung
 						sender_email = no-reply@swebhosting.de
@@ -116,7 +118,15 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscribe Confirmation
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/ConfirmSubscription.html
+		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
+		templateSuffix = _SUBSCRIPTION_CONFIRMED
+		formValuesPrefix = tx_formhandler_requestsubscription
+
+		preProcessors.10.class = Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB
+		preProcessors.10.config {
+			errorRedirectPage = {$plugin.formhandler_subscription.authCodeInvalidPID}
+			authCodeRequired = 1
+		}
 	}
 
 

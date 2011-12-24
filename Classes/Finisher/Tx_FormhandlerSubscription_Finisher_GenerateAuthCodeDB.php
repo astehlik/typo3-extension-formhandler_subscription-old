@@ -2,13 +2,13 @@
 
 class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhandler_Finisher_GenerateAuthCode {
 
-	var $table;
+	protected $table;
 
-	var $uidField = 'uid';
+	protected $uidField = 'uid';
 
-	var $hiddenField = '';
+	protected $hiddenField = '';
 
-	var $updateHiddenField = 1;
+	protected $updateHiddenField = 1;
 
 	/**
 	 * Inits the finisher mapping settings values to internal attributes.
@@ -18,6 +18,8 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 * @return void
 	 */
 	public function init($gp, $settings) {
+
+		parent::init($gp, $settings);
 
 		if (!$this->settings['table']) {
 			throw new Exception('The table needs to be specified');
@@ -52,8 +54,16 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		$serializedRowData = serialize($row);
 		$authCode = t3lib_div::getRandomHexString(16);
-		$authCode = md5($serializedRowData, $authCode);
+		$authCode = md5($serializedRowData . $authCode);
 		$time = time();
+
+			// remove old entries for the same record
+		$GLOBALS['TYPO3_DB']->exec_DELETEquery(
+			'tx_formhandler_subscription_authcodes',
+			'reference_table=' .  $GLOBALS['TYPO3_DB']->fullQuoteStr($this->table, 'tx_formhandler_subscription_authcodes') .
+			'AND reference_table_uid_field=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->uidField, 'tx_formhandler_subscription_authcodes') .
+			'AND reference_table_uid=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($row[$this->uidField], 'tx_formhandler_subscription_authcodes')
+		);
 
 		$authCodeInsertData = array(
 			'pid' => '',
@@ -65,10 +75,13 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 			'reference_table_hidden_field' => $this->hiddenField,
 			'update_hidden_field' => $this->updateHiddenField,
 			'serialized_auth_data' => $serializedRowData,
-			'authCode' => $authCode
+			'auth_code' => $authCode
 		);
 
-		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_formhandler_subscription_authcodes', $authCode);
+		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
+			'tx_formhandler_subscription_authcodes',
+			$authCodeInsertData
+		);
 
 		return $authCode;
 	}
