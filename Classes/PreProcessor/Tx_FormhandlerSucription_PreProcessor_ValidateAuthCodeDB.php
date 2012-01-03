@@ -21,7 +21,24 @@
  */
 class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formhandler_PreProcessor_ValidateAuthCode {
 
-	protected $get;
+	/**
+	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 */
+	protected $utils;
+
+	/**
+	 * Inits the finisher mapping settings values to internal attributes.
+	 *
+	 * @param array $gp
+	 * @param array $settings
+	 * @return void
+	 */
+	public function init($gp, $settings) {
+
+		parent::init($gp, $settings);
+
+		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+	}
 
 	/**
 	 * The main method called by the controller
@@ -32,46 +49,61 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 
 		try {
 
-				// We need to use the global GET variables because if
-				// the form is not submitted $this->gp will be empty
-				// because Tx_Formhandler_Controller_Form::reset
-				// is called
-			$formValuesPrefix = $this->globals->getFormValuesPrefix();
-			if (empty($formValuesPrefix)) {
-				$this->get = t3lib_div::_GET();
-			} else {
-				$this->get = t3lib_div::_GET($formValuesPrefix);
-			}
+			$authCode = $this->utils->getAuthCode();
 
-			$authCode = $this->get['authCode'];
-			if (!strlen($authCode)) {
-				if (intval($this->settings['authCodeRequired'])) {
+			if (empty($authCode)) {
+				if (!intval($this->settings['authCodeIsOptional'])) {
 					$this->utilityFuncs->throwException('validateauthcode_insufficient_params');
 				} else {
 					return $this->gp;
 				}
 			}
 
-			$authCode = $GLOBALS['TYPO3_DB']->fullQuoteStr($authCode, 'tx_formhandler_subscription_authcodes');
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_formhandler_subscription_authcodes', 'auth_code=' . $authCode);
-			if (!($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res))) {
+			$authCodeData = $this->utils->getAuthCodeDataFromDB($authCode);
+			if (!isset($authCodeData)) {
 				$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 			}
 
-			$authCodeData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+			$this->utils->checkAuthCodeAction($authCodeData['action']);
 
-			if (intval($authCodeData['update_hidden_field'])) {
-				$this->updateHiddenField($authCodeData);
+			switch ($authCodeData['action']) {
+
+				case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD:
+					$this->updateHiddenField($authCodeData);
+					$this->invalidateAuthCode($authCodeData);
+					break;
+
+				case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ACCESS_FORM:
+
+						// Make the auth code available in the form so that it can be
+						// submitted as a hidden field
+					$this->gp['authCode'] = $authCode;
+
+						// Make the auth code data and the auth code record data available
+						// so that it can be displayed to the user
+					$this->gp['authCodeData'] = $authCodeData;
+					$this->gp['authCodeRecord'] = $this->utils->getAuthCodeRecordFromDB($authCodeData);
+
+						// Store the authCode in the session so that the user can use it
+						// on different pages without the need to append it as a get
+						// parameter everytime
+					$this->utils->storeAuthCodeInSession($authCode);
+					break;
 			}
 
 			$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'redirectPage');
-			if($redirectPage) {
+			if ($redirectPage) {
 				$this->utilityFuncs->doRedirect($redirectPage, $this->settings['correctRedirectUrl'], $this->settings['additionalParams.']);
 			}
 		} catch(Exception $e) {
-			$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'errorRedirectPage');
-			if($redirectPage) {
+
+				// make sure, invalid auth codes are deleted
+			if (isset($authCodeData)) {
+				$this->invalidateAuthCode($authCodeData, TRUE);
+			}
+
+			//$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'errorRedirectPage');
+			if ($redirectPage) {
 				$this->utilityFuncs->doRedirect($redirectPage, $this->settings['correctRedirectUrl'], $this->settings['additionalParams.']);
 			} else {
 				throw new Exception($e->getMessage());
@@ -79,6 +111,15 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 		}
 
 		return $this->gp;
+	}
+
+	protected function invalidateAuthCode($authCodeData, $forceClearing = FALSE) {
+
+		if ((!intval($this->settings['doNotInvalidateAuthCode'])) || $forceClearing) {
+			$this->utils->clearAuthCodeFromSession();
+			$this->utils->clearAuthCodesByRowData($authCodeData);
+			$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
+		}
 	}
 
 	protected function updateHiddenField($authCodeData) {
@@ -94,6 +135,5 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 	}
-
 }
 ?>

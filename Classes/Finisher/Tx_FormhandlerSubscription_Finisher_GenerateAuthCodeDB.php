@@ -8,7 +8,12 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 	protected $hiddenField = '';
 
-	protected $updateHiddenField = 1;
+	protected $action;
+
+	/**
+	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 */
+	protected $utils;
 
 	/**
 	 * Inits the finisher mapping settings values to internal attributes.
@@ -21,6 +26,8 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		parent::init($gp, $settings);
 
+		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+
 		if (!$this->settings['table']) {
 			throw new Exception('The table needs to be specified');
 		} else {
@@ -31,9 +38,13 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 			$this->uidField = $this->settings['uidField'];
 		}
 
-		if (intval($this->settings['doNotUpdateHiddenField'])) {
-			$this->updateHiddenField = 0;
+		if (!empty($this->settings['action'])) {
+			$this->action = $this->settings['action'];
+		} else {
+			$this->action = Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD;
 		}
+
+		$this->utils->checkAuthCodeAction($this->action);
 
 		if ($this->settings['hiddenField']) {
 			$this->hiddenField = $this->settings['hiddenField'];
@@ -42,6 +53,27 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		} else {
 			$this->hiddenField = 'hidden';
 		}
+	}
+
+	/**
+	 * Checks, if the form values prefix should be overwritten
+	 * and sets it to the configured value
+	 *
+	 * @return array
+	 */
+	public function process() {
+
+		$currentFormValuesPrefix = $this->globals->getFormValuesPrefix();
+
+		if (!empty($this->settings['overrideFormValuesPrefix'])) {
+			$this->globals->setFormValuesPrefix($this->settings['overrideFormValuesPrefix']);
+		}
+
+		parent::process();
+
+		$this->globals->setFormValuesPrefix($currentFormValuesPrefix);
+
+		return $this->gp;
 	}
 
 	/**
@@ -57,13 +89,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		$authCode = md5($serializedRowData . $authCode);
 		$time = time();
 
-			// remove old entries for the same record
-		$GLOBALS['TYPO3_DB']->exec_DELETEquery(
-			'tx_formhandler_subscription_authcodes',
-			'reference_table=' .  $GLOBALS['TYPO3_DB']->fullQuoteStr($this->table, 'tx_formhandler_subscription_authcodes') .
-			'AND reference_table_uid_field=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->uidField, 'tx_formhandler_subscription_authcodes') .
-			'AND reference_table_uid=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($row[$this->uidField], 'tx_formhandler_subscription_authcodes')
-		);
+		$this->utils->clearAuthCodes($this->table, $this->uidField, $row[$this->uidField]);
 
 		$authCodeInsertData = array(
 			'pid' => '',
@@ -73,7 +99,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 			'reference_table_uid_field' => $this->uidField,
 			'reference_table_uid' => $row[$this->uidField],
 			'reference_table_hidden_field' => $this->hiddenField,
-			'update_hidden_field' => $this->updateHiddenField,
+			'action' => $this->action,
 			'serialized_auth_data' => $serializedRowData,
 			'auth_code' => $authCode
 		);

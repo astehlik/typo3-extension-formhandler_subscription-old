@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Remove subscription</title>
+</head>
+<body>
+
+<!-- ###TEMPLATE_FORM1### begin -->
+<div id="tx_formhandler_subscription_removesubscription">
+
+	<form id="tx_formhandler_subscription_removesubscription_form" method="post" action="###REL_URL###" enctype="multipart/form-data" class="yform">
+
+		###is_error###
+
+		<fieldset class="csc-mailform">
+			<legend>###LLL:legend_remove_subscription###</legend>
+
+			<div class="csc-mailform-field type-check ###is_error_confirm_removal###">
+				###error_confirm_removal###
+				<input type="checkbox" value="1" name="tx_formhandler_subscription[confirm_removal]" id="tx_formhandler_updatesubscription_confirm_removal" ###checked_confirm_removal_1###/>
+				<label for="tx_formhandler_updatesubscription_confirm_removal">###LLL:confirm_removal###</label>
+			</div>
+
+			<div class="csc-mailform-field type-button">
+				<input type="hidden" name="tx_formhandler_subscription[authCode]" value="###value_authCode###"/>
+				<input type="hidden" name="tx_formhandler_subscription[authCodeRecord][email]" value="###value_authCodeRecord|email###"/>
+				<input type="submit" value="###LLL:submit###" ###submit_nextStep###/>
+			</div>
+
+		</fieldset>
+
+	</form>
+
+</div>
+<!-- ###TEMPLATE_FORM1### end -->
+
+</body>
+</html>

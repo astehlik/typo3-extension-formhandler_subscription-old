@@ -50,7 +50,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			$this->subscribersTable = $this->utilityFuncs->getSingle($this->settings, 'subscribersTable');
 		}
 
-		if ($this->settings['setTemplateSuffix']) {
+		if (array_key_exists('setTemplateSuffix', $this->settings)) {
 			$this->setTemplateSuffix = (boolean)$this->settings['setTemplateSuffix'];
 		}
 
@@ -79,6 +79,10 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 				'uidField' => $this->uidField,
 				'uid' => $subscriberData[$this->uidField],
 			);
+
+				// add subscriber data to the gp array
+			$this->gp['subscriberData'] = $subscriberData;
+			$this->globals->setGP($this->gp);
 
 			$confirmedSubscriberResult = $this->getRecordsFromDatabase('checkConfirmedSelect');
 			if (!$this->recordExists($confirmedSubscriberResult)) {

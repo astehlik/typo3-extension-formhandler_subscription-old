@@ -15,13 +15,13 @@
 
 		<fieldset>
 
-			<legend>###LLL:request_modification_ledend###</legend>
+			<legend>###LLL:legend_request_modification###</legend>
 
 			<div class="type-text">
 				<div class="csc-mailform-field type-text ###is_error_email###">
 					###error_email###
 					<label for="tx_formhandler_subscription_requestmodification_email">###LLL:email### ###required_email###</label>
-					<input type="text" name="tx_formhandler_subscription_requestmodification[email]" id="tx_formhandler_subscription_requestmodification_email" value="###value_email###"/>
+					<input type="text" name="tx_formhandler_subscription[email]" id="tx_formhandler_subscription_requestmodification_email" value="###value_email###"/>
 				</div>
 			</div>
 
@@ -38,10 +38,41 @@
 <!-- ###TEMPLATE_FORM1### end -->
 
 
-<!-- ###TEMPLATE_SUBMITTEDOK### begin -->
-<h2>>###LLL:request_modification_submitted_header###</h2>
-<p>>###LLL:request_modification_submitted_message###</p>
-<!-- ###TEMPLATE_SUBMITTEDOK### end -->
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anforderung.
+
+Die E-Mail Adresse ###value_email### ist noch nicht in unserer Datenbank registriert.
+
+Falls Sie an unserem Newsletter interessiert sind, können Sie diesen jederzeit auf unserer Homepage abonnieren.
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anforderung.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrlPlain###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anforderung.
+
+Mit folgendem Link können Sie Ihre Daten aktualisieren oder sich von unserem Newsletter abmelden:
+
+###value_authCodeUrlPlain###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### end -->
 
 </body>
 </html>

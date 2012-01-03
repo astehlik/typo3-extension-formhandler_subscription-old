@@ -23,12 +23,12 @@
 				###error_gender###
 
 				<div>
-					<input id="tx_formhandler_requestsubscription_gender_m" type="radio" name="tx_formhandler_requestsubscription[gender]" value="m" ###checked_gender_m###/>
+					<input id="tx_formhandler_requestsubscription_gender_m" type="radio" name="tx_formhandler_subscription[gender]" value="m" ###checked_gender_m###/>
 					<label for="tx_formhandler_requestsubscription_gender_m">###LLL:gender_male###</label>
 				</div>
 
 				<div>
-					<input id="tx_formhandler_requestsubscription_gender_f"  type="radio" name="tx_formhandler_requestsubscription[gender]" value="f" ###checked_gender_f###/>
+					<input id="tx_formhandler_requestsubscription_gender_f"  type="radio" name="tx_formhandler_subscription[gender]" value="f" ###checked_gender_f###/>
 					<label for="tx_formhandler_requestsubscription_gender_f">###LLL:gender_female###</label>
 				</div>
 			</div>
@@ -42,13 +42,13 @@
 			<div class="csc-mailform-field type-text ###is_error_first_name###">
 				###error_first_name###
 				<label for="tx_formhandler_requestsubscription_firstname">###LLL:first_name### ###required_first_name###</label>
-				<input type="text" name="tx_formhandler_requestsubscription[first_name]" id="tx_formhandler_requestsubscription_firstname" value="###value_first_name###"/>
+				<input type="text" name="tx_formhandler_subscription[first_name]" id="tx_formhandler_requestsubscription_firstname" value="###value_first_name###"/>
 			</div>
 
 			<div class="csc-mailform-field type-text ###is_error_last_name###">
 				###error_last_name###
 				<label for="tx_formhandler_requestsubscription_lastname">###LLL:last_name### ###required_last_name###</label>
-				<input type="text" name="tx_formhandler_requestsubscription[last_name]" id="tx_formhandler_requestsubscription_lastname" value="###value_last_name###"/>
+				<input type="text" name="tx_formhandler_subscription[last_name]" id="tx_formhandler_requestsubscription_lastname" value="###value_last_name###"/>
 			</div>
 
 		</fieldset>
@@ -60,7 +60,7 @@
 			<div class="csc-mailform-field type-text ###is_error_email###">
 				###error_email###
 				<label for="tx_formhandler_requestsubscription_email">###LLL:email### ###required_email###</label>
-				<input type="text" name="tx_formhandler_requestsubscription[email]" id="tx_formhandler_requestsubscription_email" value="###value_email###"/>
+				<input type="text" name="tx_formhandler_subscription[email]" id="tx_formhandler_requestsubscription_email" value="###value_email###"/>
 			</div>
 
 		</fieldset>
@@ -114,6 +114,19 @@ Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
 Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.
 
 <!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### begin -->
+
+Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert.
+
+Mit folgendem Link können Sie Ihre Daten aktualisieren oder sich von unserem Newsletter abmelden:
+
+###value_authCodeUrlPlain###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### end -->
 
 
 </body>

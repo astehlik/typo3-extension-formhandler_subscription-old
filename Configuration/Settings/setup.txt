@@ -2,6 +2,10 @@ plugin.Tx_Formhandler.settings.predef {
 
 	formhandler_subscription_request_subscription {
 
+		formValuesPrefix = tx_formhandler_subscription
+
+		langFile.1 = EXT:formhandler_subscription/Resources/Language/Global.xml
+
 		addErrorAnchors = 0
 		debug = 1
 
@@ -9,6 +13,8 @@ plugin.Tx_Formhandler.settings.predef {
 			1 = EXT:formhandler_subscription/Classes/Finisher
 			2 = EXT:formhandler_subscription/Classes/PreProcessor
 		}
+
+		singleErrorTemplate.totalWrap = <strong class="message">|</strong>
 
 		isErrorMarker {
 			default = error
@@ -27,14 +33,13 @@ plugin.Tx_Formhandler.settings.predef {
 	formhandler_subscription_confirm_subscription < .formhandler_subscription_request_subscription
 	formhandler_subscription_request_modification < .formhandler_subscription_request_subscription
 	formhandler_subscription_modify_subscription < .formhandler_subscription_request_subscription
+	formhandler_subscription_delete_subscription < .formhandler_subscription_request_subscription
 
 	formhandler_subscription_request_subscription {
 
 		name = Subscribe
-		formValuesPrefix = tx_formhandler_requestsubscription
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
-		langFile.1 = EXT:formhandler_subscription/Resources/Language/RequestSubscription.xml
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -54,10 +59,8 @@ plugin.Tx_Formhandler.settings.predef {
 
 				subscribersTable = {$plugin.formhandler_subscription.subscribersTable}
 
-				setTemplateSuffix = 1
-
 				checkConfirmedSelect.pidInList = {$plugin.formhandler_subscription.subscriberRecordsPID}
-				checkConfirmedSelect.markers.email.data = GP:tx_formhandler_requestsubscription|email
+				checkConfirmedSelect.markers.email.data = GP:tx_formhandler_subscription|email
 				checkConfirmedSelect.where = email=###email###
 
 				checkExistenceSelect < .checkConfirmedSelect
@@ -80,6 +83,7 @@ plugin.Tx_Formhandler.settings.predef {
 						table = {$plugin.formhandler_subscription.subscribersTable}
 						selectFields = uid,email
 						authCodePage = {$plugin.formhandler_subscription.confirmSubscriptionPID}
+						action = enableRecord
 					}
 
 					30.class = Tx_Formhandler_Finisher_Mail
@@ -90,20 +94,25 @@ plugin.Tx_Formhandler.settings.predef {
 						sender_email = no-reply@swebhosting.de
 						sender_name = Newsletter
 						to_name = TEXT
-						to_name.value = {GP:tx_formhandler_requestsubscription|first_name} {GP:tx_formhandler_requestsubscription|last_name}
+						to_name.value = {GP:tx_formhandler_subscription|first_name} {GP:tx_formhandler_subscription|last_name}
 						to_name.insertData = 1
 						to_email = TEXT
-						to_email.value = {GP:tx_formhandler_requestsubscription|email}
+						to_email.value = {GP:tx_formhandler_subscription|email}
 						to_email.insertData = 1
 					}
 				}
 
+					// unconfirmed subscribers get the same mail as new subscribers
+					// but no new record is added to the database
 				finishersExistingUnconfirmedSubscriber < .finishersNewSubscriber
 				finishersExistingUnconfirmedSubscriber.10 >
 
-				finishersExistingConfirmedSubscriber {
-
-
+					// confirmed subscribers also get an email with an authcode
+					// but with a different link and a different text
+				finishersExistingConfirmedSubscriber < .finishersExistingUnconfirmedSubscriber
+				finishersExistingConfirmedSubscriber.20.config {
+					authCodePage = {$plugin.formhandler_subscription.updateSubscriptionFormPID}
+					action = accessForm
 				}
 			}
 
@@ -120,12 +129,10 @@ plugin.Tx_Formhandler.settings.predef {
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
-		formValuesPrefix = tx_formhandler_requestsubscription
 
 		preProcessors.10.class = Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB
 		preProcessors.10.config {
 			errorRedirectPage = {$plugin.formhandler_subscription.authCodeInvalidPID}
-			authCodeRequired = 1
 		}
 	}
 
@@ -135,7 +142,6 @@ plugin.Tx_Formhandler.settings.predef {
 		name = Subscription Modification Request
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestModification.html
-		langFile.1 = EXT:formhandler_subscription/Resources/Language/RequestModification.xml
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -149,10 +155,16 @@ plugin.Tx_Formhandler.settings.predef {
 
 			1 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.finishers.1
 
-			2 {
-				class = Tx_Formhandler_Finisher_SubmittedOK
-				config.returns = 1
+			1.config.finishersExistingConfirmedSubscriber {
+
+				10 >
+				30.config.user.subject = Aktualisierung Ihrer Newsletter Anmeldung
 			}
+
+
+
+			#10.class = Tx_Formhandler_Finisher_Redirect
+			#10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
 		}
 	}
 
@@ -162,6 +174,48 @@ plugin.Tx_Formhandler.settings.predef {
 		name = Subscription Modification Form
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/ModifySubscription.html
+
+		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
+
+		validators < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.validators
+		validators.1.config.fieldConf.email >
+
+		finishers {
+
+			10.class = Tx_FormhandlerSucription_Finisher_InvalidateAuthCodeDB
+
+			#20.class = Tx_Formhandler_Finisher_Redirect
+			#20.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
+		}
 	}
 
+	formhandler_subscription_delete_subscription {
+
+		name = Delete subscription
+
+		templateFile = EXT:formhandler_subscription/Resources/Templates/RemoveSubscription.html
+
+		checkBoxFields = confirm_removal
+
+		preProcessors.1.class = Tx_Formhandler_PreProcessor_LoadDefaultValues
+		preProcessors.1.config.1.confirm_removal.defaultValue = 1
+
+		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
+
+		validators {
+			1.class = Tx_Formhandler_Validator_Default
+			1.config.fieldConf {
+				confirm_removal.errorCheck.1 = required
+			}
+		}
+
+		finishers {
+
+			10.class = Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord
+
+			#20.class = Tx_Formhandler_Finisher_Redirect
+			#20.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
+		}
+
+	}
 }

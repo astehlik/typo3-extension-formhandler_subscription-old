@@ -17,22 +17,26 @@
 			<label index="required_fields">Fields marked with * are required.</label>
 		</languageKey>
 		<languageKey index="de" type="array">
+			<label index="legend_email">E-Mail</label>
+			<label index="legend_name">Name</label>
+			<label index="legend_remove_subscription">Newsletter abbestellen</label>
+			<label index="legend_request_modification">Link anfordern</label>
+			<label index="legend_submit">Anmeldung absenden</label>
 			<label index="gender">Anrede</label>
 			<label index="gender_male">Herr</label>
 			<label index="gender_female">Frau</label>
-			<label index="legend_name">Name</label>
 			<label index="first_name">Vorname</label>
 			<label index="last_name">Nachname</label>
-			<label index="legend_email">E-Mail</label>
 			<label index="email">E-Mail Adresse</label>
-			<label index="legend_submit">Anmeldung absenden</label>
 			<label index="submit">Absenden</label>
+			<label index="confirm_removal"><![CDATA[Hiermit möchte ich meine E-Mail Adresse <b>###value_authCodeRecord|email###</b> vom Newsletter abmelden.]]></label>
 			<label index="error_gender_required">Bitte geben Sie Ihre Anrede an.</label>
 			<label index="error_first_name_required">Bitte geben Sie Ihren Vornamen an.</label>
 			<label index="error_last_name_required">Bitte geben Sie Ihren Nachnamen an.</label>
 			<label index="error_email_required">Bitte geben Sie Ihre E-Mail-Adresse an.</label>
 			<label index="error_email_email">Die angegebene E-Mail-Adresse hat ein ungültiges Format.</label>
 			<label index="error_message_required">Bitte geben Sie die Nachricht ein, die Sie übermitteln möchten.</label>
+			<label index="error_confirm_removal_required">Bitte bestätigen Sie die Abmeldung von unserem Newsletter durch anhaken der Checkbox.</label>
 			<label index="required_fields">Bitte füllen Sie alle mit * markierte Felder aus.</label>
 		</languageKey>
 	</data>

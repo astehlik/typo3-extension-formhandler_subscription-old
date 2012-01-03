@@ -3,16 +3,26 @@ plugin.formhandler_subscription {
 
 	subscribersTable = tt_address
 
-		# cat=plugin.formhandler_subscription; type=string; label=Comma seperated list of PIDs that contain the subscribers
+		# cat=plugin.formhandler_subscription; type=string; label=Subscriber record PIDs: Comma seperated list of PIDs that contain the subscribers
 	subscriberRecordsPID = 36
 
 	newSubscriberRecordsPID = 36
 
-		# cat=plugin.formhandler_subscription; type=int+; label=ID of the page where will be redirected to after successfully filling out the registration form
+		# cat=plugin.formhandler_subscription; type=int+; label=Subscription request success PID: ID of the page where will be redirected to after successfully filling out the registration form
 	subscribeSuccessPID = 98
 
-		# cat=plugin.formhandler_subscription; type=int+; label=ID of the page where the user can confirm his subscription
+		# cat=plugin.formhandler_subscription; type=int+; label=Confirm subscription PID: ID of the page where the user can confirm his subscription
 	confirmSubscriptionPID = 97
+
+		# cat=plugin.formhandler_subscription; type=int+; label=Request modification success PID: ID of the page where will be redirected to after successfully filling out the modification request form
+	requestModificationSuccessPID = 103
+
+		# cat=plugin.formhandler_subscription; type=int+; label=Update subscription form PID: ID of the page where the user can update his subscription
+	updateSubscriptionFormPID = 102
+
+	updateSubscriptionSuccessPID = 105
+
+	removeSubscriptionSuccessPID = 106
 
 	authCodeInvalidPID = 101
 
