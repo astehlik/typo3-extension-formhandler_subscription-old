@@ -120,7 +120,7 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 				$this->invalidateAuthCode($authCodeData, TRUE);
 			}
 
-			//$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'errorRedirectPage');
+			$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'errorRedirectPage');
 			if ($redirectPage) {
 				$this->utilityFuncs->doRedirect($redirectPage, $this->settings['correctRedirectUrl'], $this->settings['additionalParams.']);
 			} else {
