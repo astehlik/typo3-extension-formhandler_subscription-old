@@ -6,8 +6,9 @@
 </head>
 <body>
 
+
 <!-- ###TEMPLATE_FORM1### begin -->
-<div id="tx_formhandler_subscription_updatesubscription">
+<div class="tx-formhandler-subscription tx-formhandler-subscription-updatesubscription">
 
 	<form id="tx_formhandler_subscription_updatesubscription_form" method="post" action="###REL_URL###" enctype="multipart/form-data" class="yform">
 
@@ -57,6 +58,7 @@
 			<div class="csc-mailform-field type-button">
 				<p>###LLL:required_fields###</p>
 				<input type="hidden" name="tx_formhandler_subscription[authCode]" value="###value_authCode###"/>
+				<input type="hidden" name="tx_formhandler_subscription[uid]" value="###value_uid###"/>
 				<input type="submit" value="###LLL:submit###" ###submit_nextStep###/>
 			</div>
 		</fieldset>
@@ -65,6 +67,7 @@
 
 </div>
 <!-- ###TEMPLATE_FORM1### end -->
+
 
 </body>
 </html>

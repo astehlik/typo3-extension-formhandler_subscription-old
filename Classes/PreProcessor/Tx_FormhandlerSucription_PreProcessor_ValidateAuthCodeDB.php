@@ -82,7 +82,14 @@ class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formha
 						// Make the auth code data and the auth code record data available
 						// so that it can be displayed to the user
 					$this->gp['authCodeData'] = $authCodeData;
-					$this->gp['authCodeRecord'] = $this->utils->getAuthCodeRecordFromDB($authCodeData);
+
+					$authCodeRecordData = $this->utils->getAuthCodeRecordFromDB($authCodeData);
+					$this->gp['authCodeRecord'] = $authCodeRecordData;
+
+					if (intval($this->settings['mergeRecordDataToGP'])) {
+						$currentGP = $this->gp;
+						$this->gp = array_merge($this->gp, $authCodeRecordData);
+					}
 
 						// Store the authCode in the session so that the user can use it
 						// on different pages without the need to append it as a get

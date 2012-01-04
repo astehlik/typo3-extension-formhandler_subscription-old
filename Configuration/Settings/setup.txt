@@ -1,5 +1,6 @@
 plugin.Tx_Formhandler.settings.predef {
 
+
 	formhandler_subscription_request_subscription {
 
 		formValuesPrefix = tx_formhandler_subscription
@@ -30,14 +31,16 @@ plugin.Tx_Formhandler.settings.predef {
 
 	}
 
+
 	formhandler_subscription_confirm_subscription < .formhandler_subscription_request_subscription
-	formhandler_subscription_request_modification < .formhandler_subscription_request_subscription
-	formhandler_subscription_modify_subscription < .formhandler_subscription_request_subscription
-	formhandler_subscription_delete_subscription < .formhandler_subscription_request_subscription
+	formhandler_subscription_request_update < .formhandler_subscription_request_subscription
+	formhandler_subscription_update_subscription < .formhandler_subscription_request_subscription
+	formhandler_subscription_remove_subscription < .formhandler_subscription_request_subscription
+
 
 	formhandler_subscription_request_subscription {
 
-		name = Subscribe
+		name = Subscription request form
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
 
@@ -68,11 +71,14 @@ plugin.Tx_Formhandler.settings.predef {
 
 				finishersNewSubscriber {
 
-					10.class = Tx_Formhandler_Finisher_AutoDB
+					10.class = Tx_Formhandler_Finisher_DB
 					10.config {
 						table = {$plugin.formhandler_subscription.subscribersTable}
-
-						10.fields {
+						fields {
+							gender.mapping = gender
+							first_name.mapping = first_name
+							last_name.mapping = last_name
+							email.mapping = email
 							hidden = 1
 							pid = {$plugin.formhandler_subscription.newSubscriberRecordsPID}
 						}
@@ -116,16 +122,15 @@ plugin.Tx_Formhandler.settings.predef {
 				}
 			}
 
-			#10.class = Tx_Formhandler_Finisher_Redirect
-			#10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
-
+			10.class = Tx_Formhandler_Finisher_Redirect
+			10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
 		}
 	}
 
 
 	formhandler_subscription_confirm_subscription {
 
-		name = Subscribe Confirmation
+		name = Subscription confirmation
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
@@ -137,11 +142,11 @@ plugin.Tx_Formhandler.settings.predef {
 	}
 
 
-	formhandler_subscription_request_modification {
+	formhandler_subscription_request_update {
 
-		name = Subscription Modification Request
+		name = Subscription update request
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestModification.html
+		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestUpdate.html
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -155,43 +160,69 @@ plugin.Tx_Formhandler.settings.predef {
 
 			1 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.finishers.1
 
-			1.config.finishersExistingConfirmedSubscriber {
+			1.config {
 
-				10 >
-				30.config.user.subject = Aktualisierung Ihrer Newsletter Anmeldung
+					// new subscribers only get an email with a notice that they
+					// aren't subscribed, no database record is created, no auth
+					// code is generated
+				finishersNewSubscriber {
+					10 >
+					20 >
+				}
+
+				finishersExistingConfirmedSubscriber {
+					30.config.user.subject = Aktualisierung Ihrer Newsletter Anmeldung
+				}
 			}
 
-
-
-			#10.class = Tx_Formhandler_Finisher_Redirect
-			#10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
+			10.class = Tx_Formhandler_Finisher_Redirect
+			10.config.redirectPage = {$plugin.formhandler_subscription.requestUpdateSuccessPID}
 		}
 	}
 
 
-	formhandler_subscription_modify_subscription {
+	formhandler_subscription_update_subscription {
 
-		name = Subscription Modification Form
+		name = Subscription update form
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/ModifySubscription.html
+		templateFile = EXT:formhandler_subscription/Resources/Templates/UpdateSubscription.html
 
 		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
+		preProcessors.10.config.mergeRecordDataToGP = 1
 
+			// Use the same validators as for the subscription request but
+			// remove the validation for the email since it can not be updated
 		validators < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.validators
 		validators.1.config.fieldConf.email >
 
 		finishers {
 
-			10.class = Tx_FormhandlerSucription_Finisher_InvalidateAuthCodeDB
+				// Make sure the submitted UID matches the one for which the
+				// used auth code was created
+			10.class = Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID
 
-			#20.class = Tx_Formhandler_Finisher_Redirect
-			#20.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
+			20.class = Tx_Formhandler_Finisher_DB
+			20.config {
+				table = {$plugin.formhandler_subscription.subscribersTable}
+				updateInsteadOfInsert = 1
+				key = uid
+				fields {
+					gender.mapping = gender
+					first_name.mapping = first_name
+					last_name.mapping = last_name
+				}
+			}
+
+			30.class = Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB
+
+			40.class = Tx_Formhandler_Finisher_Redirect
+			40.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
 		}
 	}
 
-	formhandler_subscription_delete_subscription {
+	formhandler_subscription_remove_subscription {
 
-		name = Delete subscription
+		name = Subscription removal
 
 		templateFile = EXT:formhandler_subscription/Resources/Templates/RemoveSubscription.html
 
@@ -213,8 +244,8 @@ plugin.Tx_Formhandler.settings.predef {
 
 			10.class = Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord
 
-			#20.class = Tx_Formhandler_Finisher_Redirect
-			#20.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
+			20.class = Tx_Formhandler_Finisher_Redirect
+			20.config.redirectPage = {$plugin.formhandler_subscription.removeSubscriptionSuccessPID}
 		}
 
 	}

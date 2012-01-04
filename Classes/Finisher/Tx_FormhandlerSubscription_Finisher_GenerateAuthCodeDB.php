@@ -59,7 +59,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 * Checks, if the form values prefix should be overwritten
 	 * and sets it to the configured value
 	 *
-	 * @return array
+	 * @return array the GET/POST data array
 	 */
 	public function process() {
 

@@ -62,7 +62,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	/**
 	 * The main method called by the controller
 	 *
-	 * @return string The output that should be displayed to the user (if any)
+	 * @return string|array The output that should be displayed to the user (if any) or the GET/POST data array
 	 */
 	public function process() {
 
@@ -94,7 +94,11 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			}
 		}
 
-		return $result;
+		if (strlen($result)) {
+			return $result;
+		} else {
+			return $this->gp;
+		}
 	}
 
 

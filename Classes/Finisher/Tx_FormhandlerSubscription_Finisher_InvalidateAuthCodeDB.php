@@ -6,7 +6,7 @@
  * Time: 22:23
  * To change this template use File | Settings | File Templates.
  */
-class Tx_FormhandlerSucription_Finisher_InvalidateAuthCodeDB extends Tx_Formhandler_AbstractFinisher {
+class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formhandler_AbstractFinisher {
 
 	/**
 	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
@@ -29,6 +29,8 @@ class Tx_FormhandlerSucription_Finisher_InvalidateAuthCodeDB extends Tx_Formhand
 
 	/**
 	 * Checks, if a valid auth code was submitted and invalidates it
+	 *
+	 * @return array the GET/POST data array
 	 */
 	public function process() {
 
@@ -46,6 +48,8 @@ class Tx_FormhandlerSucription_Finisher_InvalidateAuthCodeDB extends Tx_Formhand
 		$this->utils->clearAuthCodeFromSession();
 		$this->utils->clearAuthCodesByRowData($authCodeData);
 		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
+
+		return $this->gp;
 	}
 
 }

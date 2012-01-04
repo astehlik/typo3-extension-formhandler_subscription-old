@@ -2,11 +2,11 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: astehlik
- * Date: 02.01.12
- * Time: 22:23
+ * Date: 04.01.12
+ * Time: 16:10
  * To change this template use File | Settings | File Templates.
  */
-class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formhandler_AbstractFinisher {
+class Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID  extends Tx_Formhandler_AbstractFinisher {
 
 	/**
 	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
@@ -28,7 +28,8 @@ class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formha
 	}
 
 	/**
-	 * Checks, if a valid auth code was submitted and invalidates it
+	 * Checks, if a valid auth code was submitted and if the submitted uid
+	 * matches the one that was used for generating the auth code
 	 *
 	 * @return array the GET/POST data array
 	 */
@@ -45,15 +46,14 @@ class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formha
 			$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 		}
 
-		$markAsDeleted = FALSE;
-		if (intval($this->settings['markAsDeleted'])) {
-			$markAsDeleted = TRUE;
-		}
-		$this->utils->removeAuthCodeRecordFromDB($authCodeData, $markAsDeleted);
+		$uidField = $authCodeData['reference_table_uid_field'];
+		$uidGP = $this->gp[$uidField];
 
-		$this->utils->clearAuthCodeFromSession();
-		$this->utils->clearAuthCodesByRowData($authCodeData);
-		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
+		$uidAuthCode = $authCodeData['reference_table_uid'];
+
+		if ($uidGP !== $uidAuthCode) {
+			throw new Exception('The submitted uid does not match the one the auth code was created for.');
+		}
 
 		return $this->gp;
 	}
