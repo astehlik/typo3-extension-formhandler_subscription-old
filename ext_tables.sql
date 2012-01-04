@@ -5,7 +5,6 @@ CREATE TABLE tx_formhandler_subscription_authcodes (
 	uid int(11) unsigned NOT NULL auto_increment,
 	pid int(11) unsigned DEFAULT '0' NOT NULL,
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
-	crdate int(11) unsigned DEFAULT '0' NOT NULL,
 	reference_table varchar(255) DEFAULT '' NOT NULL,
 	reference_table_uid_field varchar(255) DEFAULT '' NOT NULL,
 	reference_table_uid varchar(255) DEFAULT '' NOT NULL,
