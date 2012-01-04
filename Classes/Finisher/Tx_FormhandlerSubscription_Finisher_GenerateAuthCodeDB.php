@@ -128,32 +128,13 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 */
 	protected function generateAuthCode($row) {
 
-		$serializedRowData = serialize($row);
-		$authCode = t3lib_div::getRandomHexString(16);
-		$authCode = md5($serializedRowData . $authCode);
-		$time = time();
-
-		$this->utils->clearAuthCodes($this->table, $this->uidField, $row[$this->uidField]);
-
-		$authCodeInsertData = array(
-			'pid' => '',
-			'tstamp' => $time,
-			'crdate' => $time,
-			'reference_table' => $this->table,
-			'reference_table_uid_field' => $this->uidField,
-			'reference_table_uid' => $row[$this->uidField],
-			'reference_table_hidden_field' => $this->hiddenField,
-			'action' => $this->action,
-			'serialized_auth_data' => $serializedRowData,
-			'auth_code' => $authCode
+		return $this->utils->generateAuthCode(
+			$row,
+			$this->action,
+			$this->table,
+			$this->uidField,
+			$this->hiddenField
 		);
-
-		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
-			'tx_formhandler_subscription_authcodes',
-			$authCodeInsertData
-		);
-
-		return $authCode;
 	}
 }
 ?>
