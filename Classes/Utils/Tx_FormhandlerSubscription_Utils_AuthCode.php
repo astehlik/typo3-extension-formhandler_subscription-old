@@ -1,25 +1,17 @@
 <?php
+
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the TYPO3 extension "formhandler_subscription". *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
  *                                                                        *
- * This script is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
- *
- * $Id: Tx_Formhandler_UtilityFuncs.php 53508 2011-10-28 10:10:07Z reinhardfuehricht $
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
 /**
- * A class providing helper functions for Formhandler
- *
- * @author	Reinhard Führicht <rf@typoheads.at>
- * @package	Tx_Formhandler
- * @subpackage	Utils
+ * A class providing helper functions for auth codes stored in the database
  */
 class Tx_FormhandlerSubscription_Utils_AuthCode {
 
@@ -78,6 +70,11 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		);
 	}
 
+	/**
+	 * Removes all auth codes that reference the given record
+	 *
+	 * @param array $authCodeRow
+	 */
 	public function clearAuthCodesByRowData($authCodeRow) {
 		$this->clearAuthCodes(
 			$authCodeRow['reference_table'],
@@ -103,6 +100,12 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		}
 	}
 
+	/**
+	 * Tries to read the auth code from the GET/POST data array or
+	 * from the session.
+	 *
+	 * @return string
+	 */
 	public function getAuthCode() {
 
 		$authCode = '';
@@ -150,6 +153,13 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		return $authCodeData;
 	}
 
+	/**
+	 * Reads the data of the record that is referenced by the auth code
+	 * from the database
+	 *
+	 * @param $authCodeData
+	 * @return NULL|array NULL if no data was found, otherwise an associative array of the record data
+	 */
 	public function getAuthCodeRecordFromDB($authCodeData) {
 
 		$authCodeRecord = NULL;
@@ -168,6 +178,11 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		return $authCodeRecord;
 	}
 
+	/**
+	 * Stores the given auth code in the session
+	 *
+	 * @param string $authCode
+	 */
 	public function storeAuthCodeInSession($authCode) {
 
 		$sesAuthCode = $GLOBALS['TSFE']->fe_user->getKey('ses', 'formhandler_auth_code');
@@ -180,6 +195,13 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		}
 	}
 
+	/**
+	 * Deletes the records that is referenced by the auth code from
+	 * the database
+	 *
+	 * @param array $authCodeData
+	 * @param bool $markAsDeleted
+	 */
 	public function removeAuthCodeRecordFromDB($authCodeData, $markAsDeleted = FALSE) {
 
 		$table = $authCodeData['reference_table'];
@@ -197,15 +219,30 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		}
 	}
 
+	/**
+	 * Tries to read the auth code from the session
+	 *
+	 * @return string
+	 */
 	public function getAuthCodeFromSession() {
 		return $GLOBALS['TSFE']->fe_user->getKey('ses', 'formhandler_auth_code');
 	}
 
+	/**
+	 * Removes the auth code from the session
+	 */
 	public function clearAuthCodeFromSession() {
 		$GLOBALS['TSFE']->fe_user->setKey('ses', 'formhandler_auth_code', NULL);
 		$GLOBALS['TSFE']->fe_user->storeSessionData();
 	}
 
+	/**
+	 * Clears the auth code from the given $gp array and
+	 * the global $gp array
+	 *
+	 * @param array $gp
+	 * @return array
+	 */
 	public function clearAuthCodeFromGP($gp) {
 
 		$globalGP = $this->globals->getGP();
@@ -220,5 +257,4 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		return $gp;
 	}
 }
-
 ?>

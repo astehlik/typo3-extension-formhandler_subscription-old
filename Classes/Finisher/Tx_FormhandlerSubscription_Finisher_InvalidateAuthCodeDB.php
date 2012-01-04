@@ -1,14 +1,23 @@
 <?php
+
+/*                                                                        *
+ * This script belongs to the TYPO3 extension "formhandler_subscription". *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
- * Created by JetBrains PhpStorm.
- * User: astehlik
- * Date: 02.01.12
- * Time: 22:23
- * To change this template use File | Settings | File Templates.
+ * Checks, if a valid auth code was submitted and invalidates it
  */
 class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formhandler_AbstractFinisher {
 
 	/**
+	 * Auth code related utility functions
+	 *
 	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
 	 */
 	protected $utils;
@@ -18,7 +27,6 @@ class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formha
 	 *
 	 * @param array $gp
 	 * @param array $settings
-	 * @return void
 	 */
 	public function init($gp, $settings) {
 
@@ -51,5 +59,5 @@ class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formha
 
 		return $this->gp;
 	}
-
 }
+?>

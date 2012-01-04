@@ -1,10 +1,30 @@
 <?php
+
+/*                                                                        *
+ * This script belongs to the TYPO3 extension "formhandler_subscription". *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
- * Created by JetBrains PhpStorm.
- * User: astehlik
- * Date: 22.12.11
- * Time: 01:26
- * To change this template use File | Settings | File Templates.
+ * This finisher checks if a subscriber exists and calls different sub-finishers
+ *
+ * The finisher handles three cases: the subscriber does not exist, the subscriber exists
+ * but is not confirmed or the subscriber exists and is confirmed.
+ *
+ * Depending on the result different sub-finishers are called. These can be configured
+ * like normal finishers in the config keys finishersNewSubscriber,
+ * finishersExistingUnconfirmedSubscriber and finishersExistingConfirmedSubscriber.
+ *
+ * If a subscriber exists the its data will be loaded to the GP array and is accessible
+ * with the 'subscriberData' key. Additionally, the record data is stored in the 'saveDB'
+ * key to simulate the behaviour of Tx_Formhandler_Finisher_DB that lets the
+ * Tx_Formhandler_Finisher_GenerateAuthCode do it's work
+ *
  */
 class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_AbstractFinisher {
 
@@ -60,7 +80,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	}
 
 	/**
-	 * The main method called by the controller
+	 * Checks, if the subscriber exists and calls the sub-finishers accordingly
 	 *
 	 * @return string|array The output that should be displayed to the user (if any) or the GET/POST data array
 	 */
@@ -74,15 +94,18 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 		} else {
 
 			$subscriberData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($existingSubscriberResult);
+
+				// This is needed for generating an auth code for the
+				// subscriber record, normally these variables are set
+				// by Tx_Formhandler_Finisher_DB
 			$this->gp['saveDB'][] = array(
 				'table' => $this->subscribersTable,
 				'uidField' => $this->uidField,
 				'uid' => $subscriberData[$this->uidField],
 			);
 
-				// add subscriber data to the gp array
+				// make subscriber data available in the the gp array
 			$this->gp['subscriberData'] = $subscriberData;
-			$this->globals->setGP($this->gp);
 
 			$confirmedSubscriberResult = $this->getRecordsFromDatabase('checkConfirmedSelect');
 			if (!$this->recordExists($confirmedSubscriberResult)) {
@@ -100,7 +123,6 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			return $this->gp;
 		}
 	}
-
 
 	/**
 	 * Adds some default configuration to a compontent
@@ -198,7 +220,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 
 	/**
 	 * Sets the template suffix to the given string
-	 * if this was not disabledin the settings
+	 * if this was not disabled in the settings
 	 *
 	 * @param $templateSuffix
 	 */
@@ -218,3 +240,4 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 		return ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0);
 	}
 }
+?>

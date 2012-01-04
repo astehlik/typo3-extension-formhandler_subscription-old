@@ -1,14 +1,35 @@
 <?php
+
+/*                                                                        *
+ * This script belongs to the TYPO3 extension "formhandler_subscription". *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
- * Created by JetBrains PhpStorm.
- * User: astehlik
- * Date: 24.12.11
- * Time: 11:30
- * To change this template use File | Settings | File Templates.
+ * Provides a non htmlspecialchars encoded auth code url marker for plain text mails
+ *
+ * In plain text mail simply use the ###value_authCodeUrlPlain### marker.
  */
 class Tx_FormhandlerSubscription_View_AuthCodeMail extends Tx_Formhandler_View_Mail {
 
+	/**
+	 * It works like the parent version but it adds an additional marker
+	 * ###value_authCodeUrlPlain### that contains an htmlspecialchars decoded
+	 * version of the auth code url.
+	 *
+	 * @see Tx_Formhandler_View_Mail::getValueMarkers()
+	 * @param $values
+	 * @param int $level
+	 * @param string $prefix
+	 * @return array array containing the value markers (###value_XXX###)
+	 */
 	protected function getValueMarkers($values, $level = 0, $prefix = 'value_') {
+
 		$markers = parent::getValueMarkers($values, $level, $prefix);
 
 		if (array_key_exists('###value_authCodeUrl###', $markers)) {
@@ -18,5 +39,6 @@ class Tx_FormhandlerSubscription_View_AuthCodeMail extends Tx_Formhandler_View_M
 
 		return $markers;
 	}
-
 }
+
+?>
