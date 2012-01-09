@@ -56,7 +56,11 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 */
 	protected $autoDeleteExpiredAuthCodes = TRUE;
 
-
+    /**
+     * Formhandler utility functions
+     *
+     * @var Tx_Formhandler_UtilityFuncs
+     */
 	protected $formhandlerUtils;
 
 	/**
