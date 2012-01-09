@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext "formhandler_subscription".
 #
-# Auto generated 09-01-2012 20:33
+# Auto generated 09-01-2012 21:01
 #
 # Manual updates:
 # Only the data in the array - everything else is removed by next
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Provides additional classes for the formhandler extension to build (newsletter) subscribe and modify / unsubscripe forms. It comes with some YAML based example templates.',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '0.0.0',
+	'version' => '0.0.1',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
