@@ -57,7 +57,14 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	 * Sends the message to the given recipient if the
 	 * recipient is not empty
 	 *
-	 * @param $recipient
+	 * The recipient can either be a single email address, an indexed array containing
+	 * multiple email addresses (e.g. array('mail1@domain.tld', 'mail2@domain.tld'))
+	 * or an associative array containing one or multiple email addresses and
+	 * recipient names (e.g. array('mail1@domain.tld' => 'John Doe',
+	 * 'mail2@domain.tld' => 'Bob Doe'))
+	 *
+	 * @param array|string $recipient the recepient(s) of the message
+	 * @see Swift_Mime_Headers_MailboxHeader::normalizeMailboxes()
 	 */
 	public function send($recipient) {
 		if (!empty($recipient)) {
@@ -69,7 +76,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the content of the html part of the message
 	 *
-	 * @param $html
+	 * @param string $html
 	 */
 	public function setHTML($html) {
 
@@ -88,7 +95,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the content of the plain text part of the message
 	 *
-	 * @param $plain
+	 * @param string $plain
 	 */
 	public function setPlain($plain) {
 
@@ -107,7 +114,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the subject of the mail
 	 *
-	 * @param $value
+	 * @param string $value
 	 */
 	public function setSubject($value) {
 		$this->emailObj->setSubject($value);
@@ -116,8 +123,8 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the name and email of the mail sender
 	 *
-	 * @param $email
-	 * @param $name
+	 * @param string $email
+	 * @param string $name
 	 */
 	public function setSender($email, $name) {
 		if (!empty($email)) {
@@ -128,8 +135,8 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the name and email of the reply to contact
 	 *
-	 * @param $email
-	 * @param $name
+	 * @param string $email
+	 * @param string $name
 	 */
 	public function setReplyTo($email, $name) {
 		if (!empty($email)) {
@@ -140,8 +147,8 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Adds the name and email of a cc recipient
 	 *
-	 * @param $email
-	 * @param $name
+	 * @param string $email
+	 * @param string $name
 	 */
 	public function addCc($email, $name) {
 		$this->emailObj->addCc($email, $name);
@@ -150,8 +157,8 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Adds the name and email of a bcc recipient
 	 *
-	 * @param $email
-	 * @param $name
+	 * @param string $email
+	 * @param string $name
 	 */
 	public function addBcc($email, $name) {
 		$this->emailObj->addBcc($email, $name);
@@ -160,7 +167,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Sets the return path to the given value
 	 *
-	 * @param $value
+	 * @param string $value RFC 2822 compatible email address
 	 */
 	public function setReturnPath($value) {
 		$this->emailObj->setReturnPath($value);
@@ -180,7 +187,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Adds the given file as an attachment to the mail
 	 *
-	 * @param $value
+	 * @param string $value path to the file to add
 	 */
 	public function addAttachment($value) {
 		$this->emailObj->attach(Swift_Attachment::fromPath($value));
@@ -224,7 +231,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Returns the current sender
 	 *
-	 * @return string
+	 * @return array containing the sender email and optionally the sender name
 	 */
 	public function getSender() {
 		return $this->emailObj->getSender();
@@ -233,7 +240,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Returns the current reply to value
 	 *
-	 * @return string
+	 * @return array containing the reply-to address and optionally the reply-to name
 	 */
 	public function getReplyTo() {
 		return $this->emailObj->getReplyTo();
@@ -242,7 +249,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Returns the current cc recepients in an array
 	 *
-	 * @return array
+	 * @return array containing the cc addresses and optionally the cc names
 	 */
 	public function getCc() {
 		return $this->emailObj->getCc();
@@ -251,7 +258,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Returns the current bcc recepients in an array
 	 *
-	 * @return array
+	 * @return array containing the bcc addresses and optionally the bcc names
 	 */
 	public function getBcc() {
 		return $this->emailObj->getBcc();
@@ -260,7 +267,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	/**
 	 * Returns the return path
 	 *
-	 * @return string
+	 * @return string RFC 2822 compatible email address
 	 */
 	public function getReturnPath() {
 		return $this->emailObj->getReturnPath();
