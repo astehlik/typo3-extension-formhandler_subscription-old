@@ -5,7 +5,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		formValuesPrefix = tx_formhandler_subscription
 
-		langFile.1 = EXT:formhandler_subscription/Resources/Language/Global.xml
+		langFile.1 = {$plugin.formhandler_subscription.globalLanguageFile}
 
 		addErrorAnchors = 0
 		debug = 1
@@ -43,7 +43,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription request form
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestSubscription.html
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -97,7 +97,8 @@ plugin.Tx_Formhandler.settings.predef {
 					30.config.mailer.class = Tx_FormhandlerSubscription_Mailer_TYPO3Mailer
 					30.config.view = Tx_FormhandlerSubscription_View_AuthCodeMail
 					30.config.user {
-						subject = ###LLL:request_subscription_email_user_subject###
+						subject = TEXT
+						subject.data = LLL:{$plugin.formhandler_subscription.globalLanguageFile}:request_subscription_email_user_subject
 						sender_email = {$plugin.formhandler_subscription.emailSenderAddress}
 						sender_name = {$plugin.formhandler_subscription.emailSenderName}
 						to_name = TEXT
@@ -133,7 +134,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription confirmation
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
 
 		preProcessors.10.class = Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB
@@ -147,7 +148,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription update request
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/RequestUpdate.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestUpdate.html
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -172,7 +173,7 @@ plugin.Tx_Formhandler.settings.predef {
 				}
 
 				finishersExistingConfirmedSubscriber {
-					30.config.user.subject = ###LLL:request_update_email_user_subject###
+					30.config.user.subject.data = LLL:{$plugin.formhandler_subscription.globalLanguageFile}:request_update_email_user_subject
 				}
 			}
 
@@ -186,7 +187,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription update form
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/UpdateSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/UpdateSubscription.html
 
 		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
 		preProcessors.10.config.mergeRecordDataToGP = 1
@@ -225,7 +226,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription removal
 
-		templateFile = EXT:formhandler_subscription/Resources/Templates/RemoveSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/RemoveSubscription.html
 
 		checkBoxFields = confirm_removal
 

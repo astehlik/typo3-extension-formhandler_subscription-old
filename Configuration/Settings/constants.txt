@@ -36,4 +36,10 @@ plugin.formhandler_subscription {
 
 		# cat=plugin.formhandler_subscription; type=string; label=Email sender name: The name that will be used as sender of the newsletter subscription mails
 	emailSenderName = Newsletter
+
+        # cat=plugin.formhandler_subscription; type=string; label=Global language file: This file is included in every prefedined form configuration and used for e-mail subjects
+	globalLanguageFile = EXT:formhandler_subscription/Resources/Language/Global.xml
+
+	    # cat=plugin.formhandler_subscription; type=string; label=Template path: The directory where the templates are stored
+	templatePath = EXT:formhandler_subscription/Resources/Templates
 }
