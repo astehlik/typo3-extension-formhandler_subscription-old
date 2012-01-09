@@ -121,14 +121,17 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	}
 
 	/**
-	 * Sets the name and email of the mail sender
+	 * Sets the name and email of the "From" header.
+	 *
+	 * The function name setSender is misleading since there is
+	 * also a "Sender" header which is not set by this method
 	 *
 	 * @param string $email
 	 * @param string $name
 	 */
 	public function setSender($email, $name) {
 		if (!empty($email)) {
-			$this->emailObj->setSender($email, $name);
+			$this->emailObj->setFrom($email, $name);
 		}
 	}
 
