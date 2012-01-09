@@ -15,16 +15,17 @@ plugin.Tx_Formhandler.settings.predef {
 			2 = EXT:formhandler_subscription/Classes/PreProcessor
 		}
 
-		singleErrorTemplate.totalWrap = <strong class="message">|</strong>
+		singleErrorTemplate {
+			totalWrap = <strong class="message">|</strong>
+			singleWrap = |<br />
+		}
 
 		isErrorMarker {
 			default = error
 			global (
 				<div class="error">
-					<strong>Fehler</strong><br />
-					Es wurden nicht alle erforderlichen Felder ausgefüllt oder
-					eine Ihrer Eingaben war fehlerhaft.<br />
-					Bitte prüfen Sie Ihre Angaben.
+					<strong>###LLL:global_error_header###</strong><br />
+					###LLL:global_error_message###
 				</div><br />
 			)
 		}
@@ -96,9 +97,9 @@ plugin.Tx_Formhandler.settings.predef {
 					30.config.mailer.class = Tx_FormhandlerSubscription_Mailer_TYPO3Mailer
 					30.config.view = Tx_FormhandlerSubscription_View_AuthCodeMail
 					30.config.user {
-						subject = Ihre Newsletter Anmeldung
-						sender_email = no-reply@swebhosting.de
-						sender_name = Newsletter
+						subject = ###LLL:request_subscription_email_user_subject###
+						sender_email = {$plugin.formhandler_subscription.emailSenderAddress}
+						sender_name = {$plugin.formhandler_subscription.emailSenderName}
 						to_name = TEXT
 						to_name.value = {GP:tx_formhandler_subscription|first_name} {GP:tx_formhandler_subscription|last_name}
 						to_name.insertData = 1
@@ -123,7 +124,7 @@ plugin.Tx_Formhandler.settings.predef {
 			}
 
 			10.class = Tx_Formhandler_Finisher_Redirect
-			10.config.redirectPage = {$plugin.formhandler_subscription.subscribeSuccessPID}
+			10.config.redirectPage = {$plugin.formhandler_subscription.requestSubscriptionSuccessPID}
 		}
 	}
 
@@ -171,7 +172,7 @@ plugin.Tx_Formhandler.settings.predef {
 				}
 
 				finishersExistingConfirmedSubscriber {
-					30.config.user.subject = Aktualisierung Ihrer Newsletter Anmeldung
+					30.config.user.subject = ###LLL:request_update_email_user_subject###
 				}
 			}
 
@@ -247,6 +248,5 @@ plugin.Tx_Formhandler.settings.predef {
 			20.class = Tx_Formhandler_Finisher_Redirect
 			20.config.redirectPage = {$plugin.formhandler_subscription.removeSubscriptionSuccessPID}
 		}
-
 	}
 }

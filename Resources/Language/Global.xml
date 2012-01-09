@@ -2,19 +2,72 @@
 <T3locallang>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="legend_contact_data">How can we respond to you?</label>
-			<label index="first_name">Firstname</label>
-			<label index="last_name">Lastname</label>
-			<label index="email">E-Mail</label>
-			<label index="legend_message">Your message for us</label>
-			<label index="message">Message</label>
-			<label index="legend_submit">Submit message</label>
-			<label index="submit">Send</label>
-			<label index="error_firstname_required">Firstname is missing.</label>
-			<label index="error_email_required">Enter your E-mail address.</label>
-			<label index="error_email_email">E-mail address must be valid syntax.</label>
-			<label index="error_message_required">Please enter the message you would like to submit.</label>
+			<label index="legend_email">E-mail address</label>
+			<label index="legend_name">Name</label>
+			<label index="legend_remove_subscription">Unsubscribe</label>
+			<label index="legend_request_modification">Request link</label>
+			<label index="legend_submit">Submit subscription</label>
+			<label index="gender">Salutation</label>
+			<label index="gender_male">Mr.</label>
+			<label index="gender_female">Ms.</label>
+			<label index="first_name">First name</label>
+			<label index="last_name">Last name</label>
+			<label index="email">E-mail</label>
+			<label index="submit">Submit</label>
+			<label index="confirm_removal"><![CDATA[I would like to unsubscribe my e-mail address <b>###value_authCodeRecord|email###</b> from the newsletter.]]></label>
+			<label index="global_error_header">Error!</label>
+			<label index="global_error_message"><![CDATA[Not all reqired fields have been filled out or a field contains an invalid value.<br />Please check the data you submitted.]]></label>
+			<label index="error_gender_required">Please provide your salutation.</label>
+			<label index="error_first_name_required">Please provide your first name.</label>
+			<label index="error_last_name_required">Please provide your last name.</label>
+			<label index="error_email_required">Please provide your e-mail address.</label>
+			<label index="error_email_email">The provided e-mail address seems to have an invalid format.</label>
+			<label index="error_confirm_removal_required">Please confirm the removal of you subscription by ticking the checkbox.</label>
 			<label index="required_fields">Fields marked with * are required.</label>
+			<label index="request_subscription_email_user_subject">Your newsletter subscription</label>
+			<label index="request_subscription_email_user_plain_new_subscriber">Thank you for your subscription to our newsletter.
+
+Please use this link to confirm your subscription:
+
+###value_authCodeUrlPlain###
+
+You can update your data or unsubscribe from our newsletter at any time.</label>
+			<label index="request_subscription_email_user_plain_unconfirmed_subscriber">Thank you for your subscription to our newsletter.
+
+Your e-mail address was already registered in our database but your subscription was not confirmed yet.
+
+Please use this link to confirm your subscription:
+
+###value_authCodeUrlPlain###
+
+You can update your data or unsubscribe from our newsletter at any time.</label>
+			<label index="request_subscription_email_user_plain_confirmed_subscriber">Thank you for your subscription to our newsletter.
+
+Your e-mail address was already registered in our database.
+
+You can use this link to update your data or to unsubscribe from our newsletter:
+
+###value_authCodeUrlPlain###</label>
+			<label index="request_update_email_user_subject">Your subscription update</label>
+			<label index="request_update_email_user_plain_new_subscriber">Thank you for your request.
+
+Your e-mail address ###value_email### has not been registered in our database.
+
+If you are interesed in our newsletter you can use the subscription form on our homepage.</label>
+			<label index="request_update_email_user_plain_unconfirmed_subscriber">Thank you for your request.
+
+Your e-mail address was already registered in our database but your subscription was not confirmed yet.
+
+Please use this link to confirm your subscription:
+
+###value_authCodeUrlPlain###
+
+You can update your data or unsubscribe from our newsletter at any time.</label>
+			<label index="request_update_email_user_plain_confirmed_subscriber">Thank you for your request.
+
+You can use this link to update your data or to unsubscribe from our newsletter:
+
+###value_authCodeUrlPlain###</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="legend_email">E-Mail</label>
@@ -30,14 +83,59 @@
 			<label index="email">E-Mail Adresse</label>
 			<label index="submit">Absenden</label>
 			<label index="confirm_removal"><![CDATA[Hiermit möchte ich meine E-Mail Adresse <b>###value_authCodeRecord|email###</b> vom Newsletter abmelden.]]></label>
+			<label index="global_error_header">Fehler!</label>
+			<label index="global_error_message"><![CDATA[Es wurden nicht alle erforderlichen Felder ausgefüllt oder eine Ihrer Eingaben war fehlerhaft.<br />Bitte prüfen Sie Ihre Angaben.]]></label>
 			<label index="error_gender_required">Bitte geben Sie Ihre Anrede an.</label>
 			<label index="error_first_name_required">Bitte geben Sie Ihren Vornamen an.</label>
 			<label index="error_last_name_required">Bitte geben Sie Ihren Nachnamen an.</label>
 			<label index="error_email_required">Bitte geben Sie Ihre E-Mail-Adresse an.</label>
 			<label index="error_email_email">Die angegebene E-Mail-Adresse hat ein ungültiges Format.</label>
-			<label index="error_message_required">Bitte geben Sie die Nachricht ein, die Sie übermitteln möchten.</label>
 			<label index="error_confirm_removal_required">Bitte bestätigen Sie die Abmeldung von unserem Newsletter durch anhaken der Checkbox.</label>
 			<label index="required_fields">Bitte füllen Sie alle mit * markierte Felder aus.</label>
+			<label index="request_subscription_email_user_subject">Ihre Newsletter Anmeldung</label>
+			<label index="request_subscription_email_user_plain_new_subscriber">Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrlPlain###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.</label>
+			<label index="request_subscription_email_user_plain_unconfirmed_subscriber">Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrlPlain###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.</label>
+			<label index="request_subscription_email_user_plain_confirmed_subscriber">Vielen Dank für Ihre Anmeldung an unserem Newsletter.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert.
+
+Mit folgendem Link können Sie Ihre Daten aktualisieren oder sich von unserem Newsletter abmelden:
+
+###value_authCodeUrlPlain###</label>
+			<label index="request_update_email_user_subject">Aktualisierung Ihrer Newsletter Anmeldung</label>
+			<label index="request_update_email_user_plain_new_subscriber">Vielen Dank für Ihre Anforderung.
+
+Die E-Mail Adresse ###value_email### ist noch nicht in unserer Datenbank registriert.
+
+			Falls Sie an unserem Newsletter interessiert sind, können Sie diesen jederzeit auf unserer Homepage abonnieren.</label>
+			<label index="request_update_email_user_plain_unconfirmed_subscriber">Vielen Dank für Ihre Anforderung.
+
+Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
+
+Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+
+###value_authCodeUrlPlain###
+
+Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.</label>
+			<label index="request_update_email_user_plain_confirmed_subscriber">Vielen Dank für Ihre Anforderung.
+
+Mit folgendem Link können Sie Ihre Daten aktualisieren oder sich von unserem Newsletter abmelden:
+
+###value_authCodeUrlPlain###</label>
 		</languageKey>
 	</data>
 </T3locallang>

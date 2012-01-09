@@ -5,30 +5,35 @@ plugin.formhandler_subscription {
 	subscribersTable = tt_address
 
 		# cat=plugin.formhandler_subscription; type=string; label=Subscriber record PIDs: Comma seperated list of PIDs that contain the subscribers
-	subscriberRecordsPID = 36
+	subscriberRecordsPID =
 
 		# cat=plugin.formhandler_subscription; type=string; label=New subscriber record PID: ID of the page where new subscribers will be stored
-	newSubscriberRecordsPID = 36
+	newSubscriberRecordsPID =
 
-		# cat=plugin.formhandler_subscription; type=int+; label=Subscription request success PID: ID of the page where will be redirected to after successfully filling out the registration form
-	subscribeSuccessPID = 98
+		# cat=plugin.formhandler_subscription; type=int+; label=Request subscription success PID: ID of the page where will be redirected to after successfully filling out the registration form
+	requestSubscriptionSuccessPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Confirm subscription PID: ID of the page where the user can confirm his subscription
-	confirmSubscriptionPID = 97
+	confirmSubscriptionPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Request update success PID: ID of the page where will be redirected to after successfully filling out the update request form
-	requestUpdateSuccessPID = 103
+	requestUpdateSuccessPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Update subscription form PID: ID of the page where the user can update his subscription
-	updateSubscriptionFormPID = 102
+	updateSubscriptionFormPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Update subscription success PID: ID of the page where the user will be redirected to after successfully updating his subscription data
-	updateSubscriptionSuccessPID = 105
+	updateSubscriptionSuccessPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Remove subscription success PID: ID of the page where the user will be redirected to after successfully removing his subscription
-	removeSubscriptionSuccessPID = 106
+	removeSubscriptionSuccessPID =
 
 		# cat=plugin.formhandler_subscription; type=int+; label=Auth code invalid PID: ID of the page where the user will be redirected to when a required auth code is missing or the provided auth code is invalid
-	authCodeInvalidPID = 101
+	authCodeInvalidPID =
 
+		# cat=plugin.formhandler_subscription; type=string; label=Email sender address: The email address that will be used as sender of the newsletter subscription mails
+	emailSenderAddress = newsletter@mydomain.tld
+
+		# cat=plugin.formhandler_subscription; type=string; label=Email sender name: The name that will be used as sender of the newsletter subscription mails
+	emailSenderName = Newsletter
 }
