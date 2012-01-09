@@ -70,8 +70,8 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			$this->subscribersTable = $this->utilityFuncs->getSingle($this->settings, 'subscribersTable');
 		}
 
-		if (array_key_exists('setTemplateSuffix', $this->settings)) {
-			$this->setTemplateSuffix = (boolean)$this->settings['setTemplateSuffix'];
+		if (array_key_exists('setTemplateSuffix', $this->settings) && (intval($this->settings['setTemplateSuffix']) == 0)) {
+			$this->setTemplateSuffix = FALSE;
 		}
 
 		if ($this->settings['uidField']) {
