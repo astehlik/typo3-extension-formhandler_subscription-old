@@ -8,7 +8,6 @@ plugin.Tx_Formhandler.settings.predef {
 		langFile.1 = {$plugin.formhandler_subscription.globalLanguageFile}
 
 		addErrorAnchors = 0
-		debug = 1
 
 		additionalIncludePaths {
 			1 = EXT:formhandler_subscription/Classes/Finisher
