@@ -63,7 +63,7 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	 * recipient names (e.g. array('mail1@domain.tld' => 'John Doe',
 	 * 'mail2@domain.tld' => 'Bob Doe'))
 	 *
-	 * @param array|string $recipient the recepient(s) of the message
+	 * @param array|string $recipient the recipient(s) of the message
 	 * @see Swift_Mime_Headers_MailboxHeader::normalizeMailboxes()
 	 */
 	public function send($recipient) {
@@ -250,21 +250,23 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	}
 
 	/**
-	 * Returns the current cc recepients in an array
+	 * Returns the current cc email addresses in an array
 	 *
-	 * @return array containing the cc addresses and optionally the cc names
+	 * @return array
 	 */
 	public function getCc() {
-		return $this->emailObj->getCc();
+		$ccArray = $this->emailObj->getCc();
+		return isset($ccArray) ? array_keys($ccArray) : array();
 	}
 
 	/**
-	 * Returns the current bcc recepients in an array
+	 * Returns the current bcc email addresses in an array
 	 *
-	 * @return array containing the bcc addresses and optionally the bcc names
+	 * @return array
 	 */
 	public function getBcc() {
-		return $this->emailObj->getBcc();
+		$bccArray = $this->emailObj->getBcc();
+		return isset($bccArray) ? array_keys($bccArray) : array();
 	}
 
 	/**
