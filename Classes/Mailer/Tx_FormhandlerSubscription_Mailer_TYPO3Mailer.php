@@ -65,12 +65,24 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	 *
 	 * @param array|string $recipient the recipient(s) of the message
 	 * @see Swift_Mime_Headers_MailboxHeader::normalizeMailboxes()
+	 * @return boolean TRUE if email was sent, FALSE otherwise
 	 */
 	public function send($recipient) {
+
 		if (!empty($recipient)) {
+
 			$this->emailObj->setTo($recipient);
-			$this->emailObj->send();
+
+			$numberOfEmailsSent = $this->emailObj->send();
+
+			var_dump($numberOfEmailsSent);
+
+			if ($numberOfEmailsSent) {
+				return TRUE;
+			}
 		}
+
+		return FALSE;
 	}
 
 	/**
