@@ -90,6 +90,7 @@ plugin.Tx_Formhandler.settings.predef {
 						selectFields = uid,email
 						authCodePage = {$plugin.formhandler_subscription.confirmSubscriptionPID}
 						action = enableRecord
+						generateTinyUrl = {$plugin.formhandler_subscription.generateTinyUrls}
 					}
 
 					30.class = Tx_Formhandler_Finisher_Mail

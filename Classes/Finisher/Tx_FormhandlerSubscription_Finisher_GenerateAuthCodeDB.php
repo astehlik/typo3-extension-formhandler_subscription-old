@@ -114,6 +114,20 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		parent::process();
 
+			// tiny url handling if configured && available
+		if ($this->settings['generateTinyUrl'] && t3lib_extMgm::isLoaded('tinyurls')) {
+			$tinyurlConfig = array(
+				'tinyurl.' => array(
+					'deleteOnUse' => '1',
+					'urlKey' => $this->gp['generated_authCode'],
+					'validUntil' => $this->utils->getAuthCodeValidityTimestamp(),
+				)
+			);
+			$url = $this->gp['authCodeUrl'];
+			$tinyUrlGenerator = t3lib_div::makeInstance('tx_tinyurls_hooks_typolink');
+			$this->gp['authCodeUrl'] = $tinyUrlGenerator->getTinyUrl($url, $this->cObj, $tinyurlConfig);
+		}
+
 		$this->globals->setFormValuesPrefix($currentFormValuesPrefix);
 
 		return $this->gp;
@@ -123,7 +137,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 * Creates a new entry in the tx_formhandler_subscription_authcodes table
 	 * and return a hash value to send by email as an auth code.
 	 *
-	 * @param array The submitted form data
+	 * @param array $row The submitted form data
 	 * @return string The auth code
 	 */
 	protected function generateAuthCode($row) {

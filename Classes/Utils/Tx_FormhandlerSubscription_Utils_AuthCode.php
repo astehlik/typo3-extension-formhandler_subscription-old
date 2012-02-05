@@ -390,6 +390,19 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	}
 
 	/**
+	 * This is basically the opposite approach to the expiry timestamp which always lies in the past.
+	 * This is the timestamp in the future until the auth codes loose their validity.
+	 *
+	 * @return int validity timestamp
+	 */
+	public function getAuthCodeValidityTimestamp() {
+		$currentTime = time();
+		$authCodeValidityDuration = $currentTime - $this->authCodeExpiryTimestamp;
+		return $currentTime + $authCodeValidityDuration;
+
+	}
+
+	/**
 	 * Sets a new auth code expiry time, if you want to use it you have
 	 * to call it before running getAuthCodeDataFromDBI() or
 	 * deleteExpiredAuthCodesFromDatabase()
@@ -402,6 +415,9 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		$authCodeExpiryTimestamp = strtotime($authCodeExpiryTime);
 		if ($authCodeExpiryTimestamp === FALSE) {
 			throw new Exception('An invalid auth code expiry time was provided: ' . $authCodeExpiryTime);
+		}
+		if ($authCodeExpiryTimestamp >= time()) {
+			throw new Exception('The auth code expiry time must not be in the future: ' . $authCodeExpiryTime);
 		}
 
 		$this->authCodeExpiryTime = $authCodeExpiryTime;
