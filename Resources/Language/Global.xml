@@ -95,7 +95,7 @@ You can use this link to update your data or to unsubscribe from our newsletter:
 			<label index="request_subscription_email_user_subject">Ihre Newsletter Anmeldung</label>
 			<label index="request_subscription_email_user_plain_new_subscriber">Vielen Dank für Ihre Anmeldung an unserem Newsletter.
 
-Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+Um Ihre Anmeldung zu bestätigen, benutzen Sie bitte folgenden Link:
 
 ###value_authCodeUrlPlain###
 
@@ -104,7 +104,7 @@ Sie können jederzeit Ihre Daten ändern oder den Newsletter abbestellen.</label
 
 Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
 
-Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+Um Ihre Anmeldung zu bestätigen, benutzen Sie bitte folgenden Link:
 
 ###value_authCodeUrlPlain###
 
@@ -126,7 +126,7 @@ Falls Sie an unserem Newsletter interessiert sind, können Sie diesen jederzeit 
 
 Ihre E-Mail Adresse wurde bereits zuvor in unserer Datenbank registriert, aber Ihre Anmeldung wurde noch nicht bestätigt.
 
-Um Ihre Anmeldung zu bestätigen benutzen Sie bitte folgenden Link:
+Um Ihre Anmeldung zu bestätigen, benutzen Sie bitte folgenden Link:
 
 ###value_authCodeUrlPlain###
 
