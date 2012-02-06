@@ -75,8 +75,6 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 
 			$numberOfEmailsSent = $this->emailObj->send();
 
-			var_dump($numberOfEmailsSent);
-
 			if ($numberOfEmailsSent) {
 				return TRUE;
 			}
