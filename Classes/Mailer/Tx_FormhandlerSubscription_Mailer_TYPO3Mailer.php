@@ -203,7 +203,13 @@ class Tx_FormhandlerSubscription_Mailer_TYPO3Mailer  extends Tx_Formhandler_Abst
 	 * @param string $value path to the file to add
 	 */
 	public function addAttachment($value) {
-		$this->emailObj->attach(Swift_Attachment::fromPath($value));
+
+			// since there is no error / exception handling in Tx_Formhandler_Finisher_Mail::sendMail()
+			// we will silently ignore non existing files
+			// thanks to Christoph Hofmann (http://forge.typo3.org/issues/12926)
+		if (@file_exists($value)) {
+			$this->emailObj->attach(Swift_Attachment::fromPath($value));
+		}
 	}
 
 	/**
