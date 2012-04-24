@@ -94,7 +94,7 @@ plugin.Tx_Formhandler.settings.predef {
 					}
 
 					30.class = Tx_Formhandler_Finisher_Mail
-					30.config.mailer.class = Tx_FormhandlerSubscription_Mailer_TYPO3Mailer
+					30.config.mailer.class = Tx_Formhandler_Mailer_TYPO3Mailer
 					30.config.view = Tx_FormhandlerSubscription_View_AuthCodeMail
 					30.config.user {
 						subject = TEXT
