@@ -1,3 +1,14 @@
+
+	# Page that contains the formhandler subscription plugin for handling ajax requests
+tx_formhandler_subscription_ajax_subscribe = PAGE
+tx_formhandler_subscription_ajax_subscribe {
+	typeNum = 254447653
+	config.disableAllHeaderCode = 1
+	10 < plugin.tx_formhandler_pi1
+	10.usePredef = formhandler_subscription_request_subscription_ajax.
+	10.controller = Tx_FormhandlerSubscription_Controller_AjaxSubmitController
+}
+
 plugin.Tx_Formhandler.settings.predef {
 
 
@@ -12,6 +23,7 @@ plugin.Tx_Formhandler.settings.predef {
 		additionalIncludePaths {
 			1 = EXT:formhandler_subscription/Classes/Finisher
 			2 = EXT:formhandler_subscription/Classes/PreProcessor
+			3 = EXT:formhandler_subscription/Classes/Controller
 		}
 
 		singleErrorTemplate {
@@ -31,7 +43,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 	}
 
-
+	formhandler_subscription_request_subscription_ajax < .formhandler_subscription_request_subscription
 	formhandler_subscription_confirm_subscription < .formhandler_subscription_request_subscription
 	formhandler_subscription_request_update < .formhandler_subscription_request_subscription
 	formhandler_subscription_update_subscription < .formhandler_subscription_request_subscription
@@ -129,6 +141,8 @@ plugin.Tx_Formhandler.settings.predef {
 		}
 	}
 
+	formhandler_subscription_request_subscription_ajax < .formhandler_subscription_request_subscription
+	formhandler_subscription_request_subscription_ajax.finishers.10 >
 
 	formhandler_subscription_confirm_subscription {
 
