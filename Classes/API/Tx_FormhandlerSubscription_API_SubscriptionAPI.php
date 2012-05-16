@@ -15,7 +15,7 @@
  *
  * It uses the AJAX API of formhandler_subscription.
  */
-class SubscriptionAPI {
+class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 
 	/**
 	 * The page UID where the request will be sent to, if not set
@@ -43,19 +43,19 @@ class SubscriptionAPI {
 	 * Tries to autodetect the target page UID
 	 *
 	 * @throws RuntimeException If the page id can not be determined
-	 * @return int
 	 */
 	protected function initializePageUid() {
 
 		if (isset($this->pageUid)) {
-			return $this->pageUid;
+			return;
 		}
 
 		/**
 		 * @var t3lib_pageSelect $pageSelect
 		 */
 		$pageSelect = t3lib_div::makeInstance('t3lib_pageSelect');
-		$whereStatement = "tt_content.list_type='formhandler_pi1' AND pages.uid=tt_content.pid";
+		$whereStatement = "tt_content.list_type='formhandler_pi1' AND pages.uid=tt_content.pid ";
+		$whereStatement .= 'AND tt_content.pi_flexform LIKE \'%<field index="predefined">%<value index="vDEF">formhandler_subscription_remove_subscription.</value>%</field>%\'';
 		$whereStatement .= $pageSelect->enableFields('pages');
 		$whereStatement .= $pageSelect->enableFields('tt_content');
 
@@ -71,7 +71,7 @@ class SubscriptionAPI {
 		}
 
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($contentResult);
-		return $row[0];
+		$this->pageUid = $row[0];
 	}
 
 	/**
@@ -82,9 +82,7 @@ class SubscriptionAPI {
 	 */
 	public function requestSubscription($subscriberData) {
 		$this->initialize();
-		$urlParameters['typeNum'] = 254447653;
-		$urlParameters = array_merge($urlParameters, $subscriberData);
-		$this->executeRequest($urlParameters);
+		$this->executeRequest(254447653, $subscriberData);
 	}
 
 	/**
@@ -111,17 +109,18 @@ class SubscriptionAPI {
 	 * Executes the request to the AJAX API and returns the result in
 	 * an array
 	 *
+	 * @param int $typeNum the page type number that should be used in this request
 	 * @param array $urlParameters this array contains the URL parameters that will be submitted to the AJAX script
 	 * @return array
 	 * @throws RuntimeException If request or the parsing of the response to JSON fails
 	 */
-	protected function executeRequest($urlParameters) {
+	protected function executeRequest($typeNum, $urlParameters) {
 
 		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST');
 		$urlParameters = t3lib_div::implodeArrayForUrl($this->formValuesPrefix, $urlParameters);
 
 		$getUrlReport = array();
-		$url = $url . '?id=' . $this->pageUid . $urlParameters;
+		$url = $url . '?id=' . $this->pageUid . '&type=' . $typeNum . $urlParameters;
 		$result = t3lib_div::getUrl($url, 0, FALSE, $getUrlReport);
 
 		if ($result === FALSE) {
@@ -130,7 +129,7 @@ class SubscriptionAPI {
 
 		$resultData = json_decode($result);
 		if (!isset($resultData)) {
-			throw new RuntimeException('JSON object could not be parsed from result: ' . $result);
+			throw new RuntimeException('JSON object could not be parsed from result: ' . $result . ' fetched from ' . $url);
 		}
 
 		return $resultData;

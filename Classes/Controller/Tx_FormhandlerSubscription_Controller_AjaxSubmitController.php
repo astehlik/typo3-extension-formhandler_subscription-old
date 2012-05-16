@@ -58,7 +58,7 @@ class Tx_FormhandlerSubscription_Controller_AjaxSubmitController extends Tx_Form
 	protected function processFinished() {
 		parent::processFinished();
 		return json_encode(array(
-			'status' => 'success',
+			'status' => 'ok',
 		));
 	}
 }
