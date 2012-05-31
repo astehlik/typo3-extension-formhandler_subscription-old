@@ -79,10 +79,11 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 	 * data.
 	 *
 	 * @param array $subscriberData
+	 * @return array result data containing status and possible errors
 	 */
 	public function requestSubscription($subscriberData) {
 		$this->initialize();
-		$this->executeRequest(254447653, $subscriberData);
+		return $this->executeRequest(254447653, $subscriberData);
 	}
 
 	/**
