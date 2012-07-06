@@ -187,21 +187,22 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	 */
 	protected function runFinishers($finisherConfig) {
 
-		ksort($finisherConfig);
 		$returnValue = NULL;
+		ksort($finisherConfig);
 
 		foreach ($finisherConfig as $idx => $tsConfig) {
 			if ($idx !== 'disabled') {
-				if (is_array($tsConfig) && isset($tsConfig['class']) && !empty($tsConfig['class'])) {
-					if (intval($tsConfig['disable']) !== 1) {
-						$className = $this->utilityFuncs->prepareClassName($tsConfig['class']);
+				$className = $this->utilityFuncs->getPreparedClassName($tsConfig);
+				if (is_array($tsConfig) && strlen($className) > 0) {
+					if (intval($this->utilityFuncs->getSingle($tsConfig, 'disable')) !== 1) {
+
 						$finisher = $this->componentManager->getComponent($className);
 						$tsConfig['config.'] = $this->addDefaultComponentConfig($tsConfig['config.']);
 						$finisher->init($this->gp, $tsConfig['config.']);
 						$finisher->validateConfig();
 
 						//if the finisher returns HTML (e.g. Tx_Formhandler_Finisher_SubmittedOK)
-						if ($tsConfig['config.']['returns']) {
+						if (intval($this->utilityFuncs->getSingle($tsConfig['config.'], 'returns')) === 1) {
 							$returnValue =  $finisher->process();
 							break;
 						} else {
