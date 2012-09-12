@@ -163,7 +163,11 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			$GLOBALS['TSFE']->showHiddenRecords = 0;
 		}
 
-		$query = $this->globals->getCObj()->getQuery($this->subscribersTable, $selectConfig);
+		/**
+		 * @var tslib_cObj $cObj
+		 */
+		$cObj = $this->globals->getCObj();
+		$query = $cObj->getQuery($this->subscribersTable, $selectConfig);
 
 			// Restore showHiddenRecords setting
 		$GLOBALS['TSFE']->showHiddenRecords = $currentShowHiddenSetting;
@@ -201,7 +205,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 						$finisher->init($this->gp, $tsConfig['config.']);
 						$finisher->validateConfig();
 
-						//if the finisher returns HTML (e.g. Tx_Formhandler_Finisher_SubmittedOK)
+							//if the finisher returns HTML (e.g. Tx_Formhandler_Finisher_SubmittedOK)
 						if (intval($this->utilityFuncs->getSingle($tsConfig['config.'], 'returns')) === 1) {
 							$returnValue =  $finisher->process();
 							break;
