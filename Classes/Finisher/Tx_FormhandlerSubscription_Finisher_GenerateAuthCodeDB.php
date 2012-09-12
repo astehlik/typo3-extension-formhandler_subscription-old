@@ -116,16 +116,17 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 			// tiny url handling if configured && available
 		if ($this->settings['generateTinyUrl'] && t3lib_extMgm::isLoaded('tinyurls')) {
-			$tinyurlConfig = array(
-				'tinyurl.' => array(
-					'deleteOnUse' => '1',
-					'urlKey' => $this->gp['generated_authCode'],
-					'validUntil' => $this->utils->getAuthCodeValidityTimestamp(),
-				)
-			);
+
+			/**
+			 * @var Tx_Tinyurls_TinyUrl_Api $tinyUrlApi
+			 */
+			$tinyUrlApi = t3lib_div::makeInstance('Tx_Tinyurls_TinyUrl_Api');
+			$tinyUrlApi->setDeleteOnUse(1);
+			$tinyUrlApi->setUrlKey($this->gp['generated_authCode']);
+			$tinyUrlApi->setValidUntil($this->utils->getAuthCodeValidityTimestamp());
+
 			$url = $this->gp['authCodeUrl'];
-			$tinyUrlGenerator = t3lib_div::makeInstance('tx_tinyurls_hooks_typolink');
-			$this->gp['authCodeUrl'] = $tinyUrlGenerator->getTinyUrl($url, $this->cObj, $tinyurlConfig);
+			$this->gp['authCodeUrl'] = $tinyUrlApi->getTinyUrl($url);
 		}
 
 		$this->globals->setFormValuesPrefix($currentFormValuesPrefix);
