@@ -24,7 +24,7 @@
  * in the session and the auth code data and the data of the referenced record
  * will be made available in the GP array.
  */
-class Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB extends Tx_Formhandler_PreProcessor_ValidateAuthCode {
+class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Formhandler_PreProcessor_ValidateAuthCode {
 
 	/**
 	 * Auth code related utility functions
