@@ -162,8 +162,6 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		if (!$res) {
 			$this->utilityFuncs->throwException('validateauthcode_update_failed');
 		}
-
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 	}
 }
 ?>
