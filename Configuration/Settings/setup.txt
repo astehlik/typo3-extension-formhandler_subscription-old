@@ -151,7 +151,7 @@ plugin.Tx_Formhandler.settings.predef {
 		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
 
-		preProcessors.10.class = Tx_FormhandlerSucription_PreProcessor_ValidateAuthCodeDB
+		preProcessors.10.class = Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB
 		preProcessors.10.config {
 			errorRedirectPage = {$plugin.formhandler_subscription.authCodeInvalidPID}
 		}
