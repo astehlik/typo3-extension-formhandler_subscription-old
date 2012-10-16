@@ -158,7 +158,9 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		$uid = $authCodeData['reference_table_uid'];
 		$hiddenField = $authCodeData['reference_table_hidden_field'];
 
-		$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery($updateTable, $uidField . '=' . $uid, array($hiddenField => 0));
+		$query = $GLOBALS['TYPO3_DB']->UPDATEquery($updateTable, $uidField . '=' . $uid, array($hiddenField => 0));
+		$this->utilityFuncs->debugMessage('sql_request', array($query));
+		$res = $GLOBALS['TYPO3_DB']->sql_query($query);
 		if (!$res) {
 			$this->utilityFuncs->throwException('validateauthcode_update_failed');
 		}
