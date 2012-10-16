@@ -54,6 +54,7 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 	 * If the auth code is invalid an exception will be thrown or the user will be
 	 * redirected to a configured error page.
 	 *
+	 * @throws Exception If the validation of the auth code fails and no error page was configured
 	 * @return array
 	 */
 	public function process() {
