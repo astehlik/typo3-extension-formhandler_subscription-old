@@ -264,4 +264,108 @@ plugin.Tx_Formhandler.settings.predef {
 			20.config.redirectPage = {$plugin.formhandler_subscription.removeSubscriptionSuccessPID}
 		}
 	}
+
+		// configuration for an example form that updates related direct_mail categories
+	formhandler_subscription_request_subscription_directmailcategories < .formhandler_subscription_request_subscription
+	formhandler_subscription_request_subscription_directmailcategories{
+
+		name = Subscription request form - direct_mail categories
+
+		templateFile = {$plugin.formhandler_subscription.templatePath}/DirectMailCategories/RequestSubscription.html
+		langFile.2 = EXT:formhandler_subscription/Resources/Language/DirectMailCategories.xml
+
+		1.checkBoxFields = dmail_category
+
+			// make sure the user selects at least one category
+		validators.1.config.fieldConf {
+			dmail_category.errorCheck.1 = required
+		}
+
+			// pre-select one category (with UID 2), to select multiple categories use this:
+			//
+			// dmail_category.defaultValue = TEXT
+            // dmail_category.defaultValue.value = 1,2
+            // dmail_category.defaultValue.separator = ,
+		preProcessors.10.class = Tx_Formhandler_PreProcessor_LoadDefaultValues
+		preProcessors.10.config {
+			1 {
+				dmail_category.defaultValue = 2
+			}
+		}
+
+			// store the related direct_mail categories the user selected in the database
+		finishers.1.config.finishersNewSubscriber {
+
+			12.class = Tx_FormhandlerSubscription_Finisher_UpdateMmData
+			12.config {
+				table = sys_dmail_ttaddress_category_mm
+
+				localUid = TEXT
+				localUid.data = GP:tx_formhandler_subscription|saveDB|0|uid
+
+				foreignUidsField = dmail_category
+
+				allowedForeignUids = 1,2
+			}
+		}
+	}
+
+		// configuration for an example form that updates related direct_mail categories
+	formhandler_subscription_update_subscription_directmailcategories < .formhandler_subscription_update_subscription
+	formhandler_subscription_update_subscription_directmailcategories {
+
+		name = Subscription update form - direct_mail categories
+
+		templateFile = {$plugin.formhandler_subscription.templatePath}/DirectMailCategories/UpdateSubscription.html
+		langFile.2 = EXT:formhandler_subscription/Resources/Language/DirectMailCategories.xml
+
+		1.checkBoxFields = dmail_category
+
+			// make sure the user selects at least one category
+		validators.1.config.fieldConf {
+			dmail_category.errorCheck.1 = required
+		}
+
+			// load values from the mm table
+		preProcessors.20.class = Tx_Formhandler_PreProcessor_LoadDB
+		preProcessors.20.config {
+
+			1 {
+				dmail_category.mapping = dmail_category
+				dmail_category.separator = ,
+			}
+
+			select {
+				table = sys_dmail_ttaddress_category_mm
+				selectFields = GROUP_CONCAT(DISTINCT uid_foreign) as dmail_category
+				where = TEXT
+				where.value = uid_local=
+				where.append = TEXT
+				where.append.data = GP:tx_formhandler_subscription|uid
+				where.append.intval = 1
+				groupBy = uid_local
+			}
+		}
+
+			// the Tx_FormhandlerSubscription_Finisher_UpdateMmData updates the related mm records
+		finishers.22 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription_directmailcategories.finishers.1.config.finishersNewSubscriber.12
+	}
+
+		// configuration for an example form that removes all relations to direct_mail categories
+	formhandler_subscription_remove_subscription_directmailcategories < .formhandler_subscription_remove_subscription
+	formhandler_subscription_remove_subscription_directmailcategories {
+
+		name = Subscription removal - direct_mail categories
+
+			// make sure the submitted UID matches the UID from the auth code
+		finishers.4.class = Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID
+
+			// use the Tx_FormhandlerSubscription_Finisher_UpdateMmData to remove related mm records
+		finishers.5 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription_directmailcategories.finishers.1.config.finishersNewSubscriber.12
+		finishers.5.config {
+			localUid.data = GP:tx_formhandler_subscription|uid
+			allowedForeignUids =
+			deleteAll = 1
+		}
+	}
 }
