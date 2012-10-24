@@ -34,6 +34,13 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 	protected $utils;
 
 	/**
+	 * TYPO3 database
+	 *
+	 * @var t3lib_db
+	 */
+	protected $typo3Db;
+
+	/**
 	 * Inits the finisher mapping settings values to internal attributes.
 	 *
 	 * @param array $gp
@@ -45,6 +52,7 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		parent::init($gp, $settings);
 
 		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		$this->typo3Db = $GLOBALS['TYPO3_DB'];
 	}
 
 	/**
@@ -99,7 +107,6 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 					$this->gp['authCodeRecord'] = $authCodeRecordData;
 
 					if (intval($this->settings['mergeRecordDataToGP'])) {
-						$currentGP = $this->gp;
 						$this->gp = array_merge($this->gp, $authCodeRecordData);
 					}
 
@@ -159,11 +166,11 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		$uid = $authCodeData['reference_table_uid'];
 		$hiddenField = $authCodeData['reference_table_hidden_field'];
 
-		$query = $GLOBALS['TYPO3_DB']->UPDATEquery($updateTable, $uidField . '=' . $uid, array($hiddenField => 0));
-		$this->utilityFuncs->debugMessage('sql_request', array($query));
-		$res = $GLOBALS['TYPO3_DB']->sql_query($query);
-		if (!$res) {
-			$this->utilityFuncs->throwException('validateauthcode_update_failed');
+		$enableQuery = $this->typo3Db->UPDATEquery($updateTable, $uidField . '=' . $uid, array($hiddenField => 0));
+		$this->utilityFuncs->debugMessage('sql_request', array($enableQuery));
+		$enableResult = $this->typo3Db->sql_query($enableQuery);
+		if (!$enableResult) {
+			$this->utilityFuncs->throwException('SQL error when enabling the record from the authCode: ' . $this->typo3Db->sql_error());
 		}
 	}
 }
