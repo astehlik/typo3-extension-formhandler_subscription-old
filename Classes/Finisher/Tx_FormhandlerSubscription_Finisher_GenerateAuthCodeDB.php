@@ -72,7 +72,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
 
 		if (!$this->settings['table']) {
-			throw new Exception('The table needs to be specified');
+			$this->utilityFuncs->throwException('The table needs to be specified');
 		} else {
 			$this->table = $this->utilityFuncs->getSingle($this->settings, 'table');
 		}

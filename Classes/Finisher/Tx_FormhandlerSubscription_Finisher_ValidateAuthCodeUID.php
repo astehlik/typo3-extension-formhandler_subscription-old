@@ -41,7 +41,6 @@ class Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID  extends Tx_Formha
 	 * Checks, if a valid auth code was submitted and if the submitted uid
 	 * matches the one that was used for generating the auth code
 	 *
-	 * @throws Exception If the submitted uid does not fit to the submitted auth code
 	 * @return array the GET/POST data array
 	 */
 	public function process() {
@@ -63,7 +62,7 @@ class Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID  extends Tx_Formha
 		$uidAuthCode = $authCodeData['reference_table_uid'];
 
 		if ($uidGP !== $uidAuthCode) {
-			throw new Exception('The submitted uid does not match the one the auth code was created for.');
+			$this->utilityFuncs->throwException('The submitted uid does not match the one the auth code was created for.');
 		}
 
 		return $this->gp;
