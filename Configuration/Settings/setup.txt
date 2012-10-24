@@ -75,6 +75,7 @@ plugin.Tx_Formhandler.settings.predef {
 				subscribersTable = {$plugin.formhandler_subscription.subscribersTable}
 
 				checkConfirmedSelect.pidInList = {$plugin.formhandler_subscription.subscriberRecordsPID}
+				checkConfirmedSelect.recursive = {$plugin.formhandler_subscription.subscriberRecordsRecursive}
 				checkConfirmedSelect.markers.email.data = GP:tx_formhandler_subscription|email
 				checkConfirmedSelect.where = email=###email###
 

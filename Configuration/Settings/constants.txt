@@ -7,6 +7,9 @@ plugin.formhandler_subscription {
 		# cat=plugin.formhandler_subscription; type=string; label=Subscriber record PIDs: Comma seperated list of PIDs that contain the subscribers
 	subscriberRecordsPID =
 
+		# cat=plugin.formhandler_subscription; type=int; label=Subscriber records recursive: How deep down the tree should subscriber records be searched
+	subscriberRecordsRecursive = 0
+
 		# cat=plugin.formhandler_subscription; type=string; label=New subscriber record PID: ID of the page where new subscribers will be stored
 	newSubscriberRecordsPID =
 
