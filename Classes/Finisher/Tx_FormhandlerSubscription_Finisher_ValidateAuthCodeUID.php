@@ -66,7 +66,7 @@ class Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID  extends Tx_Formha
 		$uidAuthCode = intval($authCodeData['reference_table_uid']);
 
 		if ($uidGP !== $uidAuthCode) {
-			$this->utilityFuncs->throwException('The submitted uid ' . $uidGP . ' does not match the one the auth code was created for:' . $uidAuthCode);
+			$this->utilityFuncs->throwException('The submitted uid ' . $uidGP . ' does not match the one the auth code was created for: ' . $uidAuthCode);
 		}
 
 		return $this->gp;
