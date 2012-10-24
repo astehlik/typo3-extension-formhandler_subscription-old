@@ -25,7 +25,11 @@
 
 			<div class="csc-mailform-field type-button">
 				<input type="hidden" name="tx_formhandler_subscription[authCode]" value="###value_authCode###"/>
+				<input type="hidden" name="tx_formhandler_subscription[uid]" value="###value_authCodeRecord|uid###"/>
+
+				<!-- We need to re-submit all data we want to display to the user after validation fails -->
 				<input type="hidden" name="tx_formhandler_subscription[authCodeRecord][email]" value="###value_authCodeRecord|email###"/>
+
 				<input type="submit" value="###LLL:submit###" ###submit_nextStep###/>
 			</div>
 
