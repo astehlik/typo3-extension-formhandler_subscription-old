@@ -1,4 +1,5 @@
 <?php
+
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
  *                                                                        *

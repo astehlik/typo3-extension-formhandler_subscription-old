@@ -268,7 +268,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		// configuration for an example form that updates related direct_mail categories
 	formhandler_subscription_request_subscription_directmailcategories < .formhandler_subscription_request_subscription
-	formhandler_subscription_request_subscription_directmailcategories{
+	formhandler_subscription_request_subscription_directmailcategories {
 
 		name = Subscription request form - direct_mail categories
 
