@@ -16,7 +16,6 @@ return array(
 	'tx_formhandlersubscription_exceptions_missingsettingexception' => $classesPath . 'Exceptions/MissingSettingException.php',
 	'tx_formhandlersubscription_exceptions_abstractexception' => $classesPath . 'Exceptions/AbstractException.php',
 	'tx_formhandlersubscription_finisher_generateauthcodedb' => $classesPath . 'Finisher/Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB.php',
-	'tx_formhandlersubscription_mvc_formhandlerdata' => $classesPath . 'Mvc/FormhandlerData.php',
 	'tx_formhandlersubscription_test_unit_fixtures_mockcomponentmanager' => $unitTestsPath . 'Fixtures/MockComponentManager.php',
 	'tx_formhandlersubscription_test_unit_fixtures_mockglobals' => $unitTestsPath . 'Fixtures/MockGlobals.php',
 	'tx_formhandlersubscription_test_unit_fixtures_mockutilityfuncs' => $unitTestsPath . 'Fixtures/MockUtilityFuncs.php',
