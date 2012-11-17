@@ -23,6 +23,21 @@
 class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhandler_Finisher_GenerateAuthCode {
 
 	/**
+	 * The action that will be executed when the user provides
+	 * the correct auth code
+	 *
+	 * @var string
+	 */
+	protected $action;
+
+	/**
+	 * The field that marks the referenced record as hidden
+	 *
+	 * @var string
+	 */
+	protected $hiddenField = '';
+
+	/**
 	 * The table that contains the records that are referenced
 	 *
 	 * @var string
@@ -35,21 +50,6 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 * @var string
 	 */
 	protected $uidField = 'uid';
-
-	/**
-	 * The field that marks the referenced record as hidden
-	 *
-	 * @var string
-	 */
-	protected $hiddenField = '';
-
-	/**
-	 * The action that will be executed when the user provides
-	 * the correct auth code
-	 *
-	 * @var string
-	 */
-	protected $action;
 
 	/**
 	 * Auth code related utility functions
