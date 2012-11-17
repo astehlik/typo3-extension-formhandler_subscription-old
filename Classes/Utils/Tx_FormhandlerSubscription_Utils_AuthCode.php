@@ -155,7 +155,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 * Checks if the given action is valid
 	 *
 	 * @param string $action the action that should be checked
-	 * @throws Exception if action is invalid
+	 * @throws Tx_FormhandlerSubscription_Exceptions_InvalidSettingException if action is invalid
 	 */
 	public function checkAuthCodeAction($action) {
 		switch ($action) {
@@ -163,7 +163,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 			case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ACCESS_FORM:
 				break;
 			default:
-				throw new Exception("Invalid auth code action: " . $action);
+				throw new Tx_FormhandlerSubscription_Exceptions_InvalidSettingException('action');
 				break;
 		}
 	}

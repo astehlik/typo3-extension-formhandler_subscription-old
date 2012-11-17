@@ -63,6 +63,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 *
 	 * @param array $gp
 	 * @param array $settings
+	 * @throws Tx_FormhandlerSubscription_Exceptions_MissingSettingException If not all requires settings have heen set
 	 * @return void
 	 */
 	public function init($gp, $settings) {
@@ -72,7 +73,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
 
 		if (!$this->settings['table']) {
-			$this->utilityFuncs->throwException('The table needs to be specified');
+			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('table');
 		} else {
 			$this->table = $this->utilityFuncs->getSingle($this->settings, 'table');
 		}
