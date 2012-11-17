@@ -34,9 +34,17 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 	var $formValuesPrefix = 'tx_formhandler_subscription';
 
 	/**
+	 * TYPO3 database
+	 *
+	 * @var t3lib_db
+	 */
+	var $typo3Db = NULL;
+
+	/**
 	 * Initializes required parameters
 	 */
 	protected function initialize() {
+		$this->typo3Db = $GLOBALS['TYPO3_DB'];
 		$this->initializePageUid();
 	}
 
@@ -60,18 +68,18 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 		$whereStatement .= $pageSelect->enableFields('pages');
 		$whereStatement .= $pageSelect->enableFields('tt_content');
 
-		$contentResult = $GLOBALS['TYPO3_DB']->exec_SELECTquery('pages.uid', 'pages,tt_content', $whereStatement, '', '', '1');
+		$contentResult = $this->typo3Db->exec_SELECTquery('pages.uid', 'pages,tt_content', $whereStatement, '', '', '1');
 
 
 		if ($contentResult === FALSE) {
-			throw new RuntimeException('Error detecting target PID: ' . $GLOBALS['TYPO3_DB']->sql_error());
+			throw new RuntimeException('Error detecting target PID: ' . $this->typo3Db->sql_error());
 		}
 
-		if (!$GLOBALS['TYPO3_DB']->sql_num_rows($contentResult)) {
+		if (!$this->typo3Db->sql_num_rows($contentResult)) {
 			throw new RuntimeException('The target PID could not be detected. No active formhandler plugin content element was found.');
 		}
 
-		$row = $GLOBALS['TYPO3_DB']->sql_fetch_row($contentResult);
+		$row = $this->typo3Db->sql_fetch_row($contentResult);
 		$this->pageUid = $row[0];
 	}
 
