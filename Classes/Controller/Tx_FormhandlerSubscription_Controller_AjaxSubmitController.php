@@ -45,7 +45,7 @@ class Tx_FormhandlerSubscription_Controller_AjaxSubmitController extends Tx_Form
 		parent::processNotValid();
 		return json_encode(array(
 			'status' => 'error',
-			'errors' =>$this->errors
+			'errors' => $this->errors
 		));
 	}
 
