@@ -1,0 +1,157 @@
+<?php
+
+/*                                                                        *
+ * This script belongs to the TYPO3 extension "formhandler_subscription". *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+/**
+ * Testcase for the finisher that generates an auth code that is stored
+ * in the database
+ */
+class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest extends Tx_Phpunit_TestCase {
+
+	/**
+	 * Instance of auth code db finisher
+	 *
+	 * @var Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB
+	 */
+	protected $authCodeDbFinisher;
+
+	protected $defaultSettings = array(
+		'table' => 'testtable',
+	);
+
+	public function setUp() {
+
+		$componentManager = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockComponentManager');
+		$configuration = $this->getMock('Tx_Formhandler_Configuration');
+		$globals = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockGlobals');
+		$utilityFuncs = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockUtilityFuncs');
+
+		$this->authCodeDbFinisher = t3lib_div::makeInstance(
+			'Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB',
+			$componentManager,
+			$configuration,
+			$globals,
+			$utilityFuncs
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function hiddenFieldDefaultIsHidden() {
+		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
+		$hiddenFieldName = $this->authCodeDbFinisher->getHiddenFieldName();
+		$this->assertEquals('hidden', $hiddenFieldName);
+	}
+
+	/**
+	 * @test
+	 */
+	public function hiddenFieldIsReadFromSettings() {
+
+		$GLOBALS['TCA']['testtable']['ctrl']['enablecolumns']['disabled'] = 'hiddenValueFromTca';
+
+		$settings = array_merge($this->defaultSettings, array(
+			'hiddenField' => 'hiddenValueFromSettings',
+		));
+
+		$this->authCodeDbFinisher->init(array(), $settings);
+		$hiddenFieldName = $this->authCodeDbFinisher->getHiddenFieldName();
+		$this->assertEquals('hiddenValueFromSettings', $hiddenFieldName);
+	}
+
+	/**
+	 * @test
+	 */
+	public function hiddenFieldIsReadFromTca() {
+
+		$GLOBALS['TCA']['testtable']['ctrl']['enablecolumns']['disabled'] = 'hiddenValueFromTca';
+
+		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
+		$hiddenFieldName = $this->authCodeDbFinisher->getHiddenFieldName();
+		$this->assertEquals('hiddenValueFromTca', $hiddenFieldName);
+	}
+
+	/**
+	 * @test
+	 */
+	public function actionDefaultIsEnable() {
+		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
+		$authCodeAction = $this->authCodeDbFinisher->getAuthCodeAction();
+		$this->assertEquals(Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD, $authCodeAction);
+	}
+
+	/**
+	 * @test
+	 */
+	public function actionInvalidThrowsException() {
+
+		$settings = array_merge($this->defaultSettings, array(
+			'action' => 'invalidAction'
+		));
+
+		try {
+			$this->authCodeDbFinisher->init(array(), $settings);
+		} catch (Tx_FormhandlerSubscription_Exceptions_InvalidSettingException $invalidSettingException) {
+			$this->assertEquals('action', $invalidSettingException->getInvalidSetting());
+			return;
+		}
+
+		$this->fail('No exception was thrown even though the action was invalid');
+	}
+
+	/**
+	 * @test
+	 */
+	public function tableNameIsRequired() {
+
+		try {
+			$this->authCodeDbFinisher->init(array(), array());
+		} catch (Tx_FormhandlerSubscription_Exceptions_MissingSettingException $missingSettingException) {
+			$this->assertEquals('table', $missingSettingException->getMissingSetting());
+			return;
+		}
+
+		$this->fail('No exception was thrown even though the table name was missing');
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function tableNameIsSet() {
+		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
+		$tableName = $this->authCodeDbFinisher->getTableName();
+		$this->assertEquals('testtable', $tableName);
+	}
+
+	/**
+	 * @test
+	 */
+	public function uidFieldDefaultIsUid() {
+		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
+		$uidFieldName = $this->authCodeDbFinisher->getUidFieldName();
+		$this->assertEquals('uid', $uidFieldName);
+	}
+
+	/**
+	 * @test
+	 */
+	public function uidFieldDefaultIsSet() {
+		$settings = array_merge($this->defaultSettings, array('uidField' => 'testUidFieldName'));
+		$this->authCodeDbFinisher->init(array(), $settings);
+		$uidFieldName = $this->authCodeDbFinisher->getUidFieldName();
+		$this->assertEquals('testUidFieldName', $uidFieldName);
+	}
+
+}
+
+?>
