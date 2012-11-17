@@ -100,6 +100,41 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	}
 
 	/**
+	 * Returns the action that is bound to the current auth code
+	 *
+	 * @return string
+	 */
+	public function getAuthCodeAction() {
+		return $this->action;
+	}
+
+	/**
+	 * Returns the name of the table field that disables the referenced record
+	 *
+	 * @return string
+	 */
+	public function getHiddenFieldName() {
+		return $this->hiddenField;
+	}
+
+	/**
+	 * Returns the name of the table that contains the referenced record
+	 *
+	 * @return string
+	 */
+	public function getTableName() {
+		return $this->table;
+	}
+
+	/**
+	 * Returns the name of the table field that contains the uid of the referenced record
+	 * @return string
+	 */
+	public function getUidFieldName() {
+		return $this->uidField;
+	}
+
+	/**
 	 * Checks, if the form values prefix should be overwritten
 	 * and sets it to the configured value
 	 *
