@@ -71,6 +71,20 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	static protected  $instance = NULL;
 
 	/**
+	 * TYPO3 Frontend user
+	 *
+	 * @var tslib_feUserAuth
+	 */
+	var $tsfeUser = NULL;
+
+	/**
+	 * TYPO3 database
+	 *
+	 * @var t3lib_db
+	 */
+	var $typo3Db = NULL;
+
+	/**
 	 * Singleton for getting the current instance of the utils class
 	 *
 	 * @static
@@ -90,6 +104,8 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 
 		$this->formhandlerUtils = Tx_Formhandler_UtilityFuncs::getInstance();
 		$this->globals = Tx_Formhandler_Globals::getInstance();
+		$this->typo3Db = $GLOBALS['TYPO3_DB'];
+		$this->tsfe = $GLOBALS['TSFE'];
 
 		$settings = $this->globals->getSettings();
 		if (array_key_exists('authCodeDBExpiryTime', $settings)) {
@@ -114,11 +130,11 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	public function clearAuthCodes($table, $uidField, $uid) {
 
 			// remove old entries for the same record
-		$GLOBALS['TYPO3_DB']->exec_DELETEquery(
+		$this->typo3Db->exec_DELETEquery(
 			$this->authCodeTable,
-			'reference_table=' .  $GLOBALS['TYPO3_DB']->fullQuoteStr($table, $this->authCodeTable) .
-			'AND reference_table_uid_field=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uidField, $this->authCodeTable) .
-			'AND reference_table_uid=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uid, $this->authCodeTable)
+			'reference_table=' .  $this->typo3Db->fullQuoteStr($table, $this->authCodeTable) .
+			'AND reference_table_uid_field=' . $this->typo3Db->fullQuoteStr($uidField, $this->authCodeTable) .
+			'AND reference_table_uid=' . $this->typo3Db->fullQuoteStr($uid, $this->authCodeTable)
 		);
 	}
 
@@ -184,7 +200,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 			'auth_code' => $authCode
 		);
 
-		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
+		$this->typo3Db->exec_INSERTquery(
 			$this->authCodeTable,
 			$authCodeInsertData
 		);
@@ -239,8 +255,8 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 
 		$authCodeData = NULL;
 
-		$authCode = $GLOBALS['TYPO3_DB']->fullQuoteStr($authCode, $this->authCodeTable);
-		$query = $GLOBALS['TYPO3_DB']->SELECTquery(
+		$authCode = $this->typo3Db->fullQuoteStr($authCode, $this->authCodeTable);
+		$query = $this->typo3Db->SELECTquery(
 			'*',
 			$this->authCodeTable,
 			'auth_code=' . $authCode . ' AND tstamp > ' . $this->authCodeExpiryTimestamp
@@ -248,26 +264,26 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 
 		$this->formhandlerUtils->debugMessage('Trying to read auth code data from database');
 		$this->formhandlerUtils->debugMessage('sql_request', array($query));
-		$res = $GLOBALS['TYPO3_DB']->sql_query($query);
-		if ($GLOBALS['TYPO3_DB']->sql_error()) {
-			$this->formhandlerUtils->debugMessage('error', array($GLOBALS['TYPO3_DB']->sql_error()), 3);
+		$res = $this->typo3Db->sql_query($query);
+		if ($this->typo3Db->sql_error()) {
+			$this->formhandlerUtils->debugMessage('error', array($this->typo3Db->sql_error()), 3);
 		}
 
-		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
+		if ($res && $this->typo3Db->sql_num_rows($res)) {
 
-			$authCodeData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			$authCodeData = $this->typo3Db->sql_fetch_assoc($res);
 
 				// when the auth code was used successfully refresh the timestamp
 				// to prevent the user from running into an error after successfully
 				// accessing and filling out a protected form
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery(
+			$this->typo3Db->exec_UPDATEquery(
 				$this->authCodeTable,
 				'uid=' . $authCodeData['uid'],
 				array('tstamp' => time())
 			);
 		}
 
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		$this->typo3Db->sql_free_result($res);
 
 		return $authCodeData;
 	}
@@ -285,14 +301,14 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 
 		$table = $authCodeData['reference_table'];
 		$uidField = $authCodeData['reference_table_uid_field'];
-		$uid = $GLOBALS['TYPO3_DB']->fullQuoteStr($authCodeData['reference_table_uid'], $table);
+		$uid = $this->typo3Db->fullQuoteStr($authCodeData['reference_table_uid'], $table);
 
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, $uidField . '=' . $uid);
-		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res)) {
-			$authCodeRecord = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		$res = $this->typo3Db->exec_SELECTquery('*', $table, $uidField . '=' . $uid);
+		if ($res && $this->typo3Db->sql_num_rows($res)) {
+			$authCodeRecord = $this->typo3Db->sql_fetch_assoc($res);
 		}
 
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		$this->typo3Db->sql_free_result($res);
 
 		return $authCodeRecord;
 	}
@@ -304,13 +320,13 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 */
 	public function storeAuthCodeInSession($authCode) {
 
-		$sesAuthCode = $GLOBALS['TSFE']->fe_user->getKey('ses', 'formhandler_auth_code');
+		$sesAuthCode = $this->tsfeUser->getKey('ses', 'formhandler_auth_code');
 
 			// Performance: Only update the auth code in the session if it is
 			// not already stored
 		if ($sesAuthCode !== $authCode) {
-			$GLOBALS['TSFE']->fe_user->setKey('ses', 'formhandler_auth_code', $authCode);
-			$GLOBALS['TSFE']->fe_user->storeSessionData();
+			$this->tsfeUser->setKey('ses', 'formhandler_auth_code', $authCode);
+			$this->tsfeUser->storeSessionData();
 		}
 	}
 
@@ -325,16 +341,16 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 
 		$table = $authCodeData['reference_table'];
 		$uidField = $authCodeData['reference_table_uid_field'];
-		$uid = $GLOBALS['TYPO3_DB']->fullQuoteStr($authCodeData['reference_table_uid'], $table);
+		$uid = $this->typo3Db->fullQuoteStr($authCodeData['reference_table_uid'], $table);
 
 		t3lib_div::loadTCA($table);
 
 		if ($markAsDeleted && array_key_exists('delete', $GLOBALS['TCA'][$table]['ctrl'])) {
 			$deleteColumn = $GLOBALS['TCA'][$table]['ctrl']['delete'];
 			$fieldValues[$deleteColumn] = 1;
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery($table, $uidField . '=' . $uid, $fieldValues);
+			$this->typo3Db->exec_UPDATEquery($table, $uidField . '=' . $uid, $fieldValues);
 		} else {
-			$GLOBALS['TYPO3_DB']->exec_DELETEquery($table, $uidField . '=' . $uid);
+			$this->typo3Db->exec_DELETEquery($table, $uidField . '=' . $uid);
 		}
 	}
 
@@ -344,15 +360,15 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 * @return string
 	 */
 	public function getAuthCodeFromSession() {
-		return $GLOBALS['TSFE']->fe_user->getKey('ses', 'formhandler_auth_code');
+		return $this->tsfeUser->getKey('ses', 'formhandler_auth_code');
 	}
 
 	/**
 	 * Removes the auth code from the session
 	 */
 	public function clearAuthCodeFromSession() {
-		$GLOBALS['TSFE']->fe_user->setKey('ses', 'formhandler_auth_code', NULL);
-		$GLOBALS['TSFE']->fe_user->storeSessionData();
+		$this->tsfeUser->setKey('ses', 'formhandler_auth_code', NULL);
+		$this->tsfeUser->storeSessionData();
 	}
 
 	/**
@@ -383,7 +399,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 */
 	public function deleteExpiredAuthCodesFromDatabase() {
 
-		$GLOBALS['TYPO3_DB']->exec_DELETEquery(
+		$this->typo3Db->exec_DELETEquery(
 			$this->authCodeTable,
 			'tstamp < ' . $this->authCodeExpiryTimestamp
 		);
