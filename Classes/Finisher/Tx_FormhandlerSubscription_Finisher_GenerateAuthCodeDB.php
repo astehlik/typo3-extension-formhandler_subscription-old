@@ -101,8 +101,8 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		if ($this->settings['hiddenField']) {
 			$this->hiddenField = $this->settings['hiddenField'];
-		} elseif ($GLOBALS['TCA'][$this->table]['ctrl']['enablecolumns']['hidden']) {
-			$this->hiddenField = $GLOBALS['TCA'][$this->table]['ctrl']['enablecolumns']['hidden'];
+		} elseif ($GLOBALS['TCA'][$this->table]['ctrl']['enablecolumns']['disabled']) {
+			$this->hiddenField = $GLOBALS['TCA'][$this->table]['ctrl']['enablecolumns']['disabled'];
 		} else {
 			$this->hiddenField = 'hidden';
 		}
