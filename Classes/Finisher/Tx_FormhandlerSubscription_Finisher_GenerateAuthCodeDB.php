@@ -45,6 +45,13 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	protected $table;
 
 	/**
+	 * Tiny URL API
+	 *
+	 * @var Tx_Tinyurls_TinyUrl_Api
+	 */
+	protected $tinyUrlApi;
+
+	/**
 	 * The field that contains the uid of the referenced record
 	 *
 	 * @var string
@@ -70,7 +77,9 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		parent::init($gp, $settings);
 
-		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		if (!isset($this->utils)) {
+			$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		}
 
 		if (!$this->settings['table']) {
 			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('table');
@@ -150,24 +159,29 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 		parent::process();
 
-			// tiny url handling if configured && available
-		if ($this->settings['generateTinyUrl'] && t3lib_extMgm::isLoaded('tinyurls')) {
-
-			/**
-			 * @var Tx_Tinyurls_TinyUrl_Api $tinyUrlApi
-			 */
-			$tinyUrlApi = t3lib_div::makeInstance('Tx_Tinyurls_TinyUrl_Api');
-			$tinyUrlApi->setDeleteOnUse(1);
-			$tinyUrlApi->setUrlKey($this->gp['generated_authCode']);
-			$tinyUrlApi->setValidUntil($this->utils->getAuthCodeValidityTimestamp());
-
-			$url = $this->gp['authCodeUrl'];
-			$this->gp['authCodeUrl'] = $tinyUrlApi->getTinyUrl($url);
-		}
+		$this->generateTinyUrl();
 
 		$this->globals->setFormValuesPrefix($currentFormValuesPrefix);
 
 		return $this->gp;
+	}
+
+	/**
+	 * Injector for auth code utilities
+	 *
+	 * @param $authCodeUtilities Tx_FormhandlerSubscription_Utils_AuthCode
+	 */
+	public function setAuthCodeUtils($authCodeUtilities) {
+		$this->utils = $authCodeUtilities;
+	}
+
+	/**
+	 * Injector for tiny URL API
+	 *
+	 * @param $tinyUrlApi Tx_Tinyurls_TinyUrl_Api
+	 */
+	public function setTinyUrlApi($tinyUrlApi) {
+		$this->tinyUrlApi = $tinyUrlApi;
 	}
 
 	/**
@@ -186,6 +200,30 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 			$this->uidField,
 			$this->hiddenField
 		);
+	}
+
+	/**
+	 * Creates a tiny url if enabled in configuration and extension
+	 * is available
+	 */
+	protected function generateTinyUrl() {
+
+
+		if (!($this->settings['generateTinyUrl'] && t3lib_extMgm::isLoaded('tinyurls'))) {
+			return;
+		}
+
+		if (!isset($this->tinyUrlApi)) {
+			$this->tinyUrlApi = t3lib_div::makeInstance('Tx_Tinyurls_TinyUrl_Api');
+		}
+
+		$this->tinyUrlApi->setDeleteOnUse(1);
+		$this->tinyUrlApi->setUrlKey($this->gp['generated_authCode']);
+		$this->tinyUrlApi->setValidUntil($this->utils->getAuthCodeValidityTimestamp());
+
+		$url = $this->gp['authCodeUrl'];
+		$this->gp['authCodeUrl'] = $this->tinyUrlApi->getTinyUrl($url);
+
 	}
 }
 ?>
