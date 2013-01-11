@@ -105,7 +105,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		$this->formhandlerUtils = Tx_Formhandler_UtilityFuncs::getInstance();
 		$this->globals = Tx_Formhandler_Globals::getInstance();
 		$this->typo3Db = $GLOBALS['TYPO3_DB'];
-		$this->tsfe = $GLOBALS['TSFE'];
+		$this->tsfeUser = $GLOBALS['TSFE']->fe_user;
 
 		$settings = $this->globals->getSettings();
 		if (array_key_exists('authCodeDBExpiryTime', $settings)) {
