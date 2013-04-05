@@ -54,7 +54,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription request form
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/RequestSubscription.html
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -149,7 +149,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription confirmation
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
 
 		preProcessors.10.class = Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB
@@ -163,7 +163,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription update request
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/RequestUpdate.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/RequestUpdate.html
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
@@ -202,7 +202,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription update form
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/UpdateSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/UpdateSubscription.html
 
 		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
 		preProcessors.10.config.mergeRecordDataToGP = 1
@@ -241,7 +241,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription removal
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/RemoveSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/RemoveSubscription.html
 
 		checkBoxFields = confirm_removal
 
@@ -272,7 +272,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription request form - direct_mail categories
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/DirectMailCategories/RequestSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/DirectMailCategories/RequestSubscription.html
 		langFile.2 = EXT:formhandler_subscription/Resources/Language/DirectMailCategories.xml
 
 		1.checkBoxFields = dmail_category
@@ -317,7 +317,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		name = Subscription update form - direct_mail categories
 
-		templateFile = {$plugin.formhandler_subscription.templatePath}/DirectMailCategories/UpdateSubscription.html
+		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/DirectMailCategories/UpdateSubscription.html
 		langFile.2 = EXT:formhandler_subscription/Resources/Language/DirectMailCategories.xml
 
 		1.checkBoxFields = dmail_category

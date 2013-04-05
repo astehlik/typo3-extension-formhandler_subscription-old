@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Request subscription</title>
+</head>
+<body>
+
+
+<!-- ###TEMPLATE_FORM1### begin -->
+<div class="tx-formhandler-subscription tx-formhandler-subscription-requestsubscription">
+
+	<form method="post" action="###REL_URL###" enctype="multipart/form-data" class="ym-form linearize-form ym-columnar">
+
+		###is_error###
+
+		<div class="ym-fbox-check ###is_error_gender###">
+			###error_gender###
+			<div>
+				<span class="ym-label">###LLL:gender### ###required_gender###</span>
+				<input id="gender_m" type="radio" name="tx_formhandler_subscription[gender]" value="m" ###checked_gender_m### />
+				<label for="gender_m">###LLL:gender_male###</label>
+			</div>
+			<div>
+				<input id="gender_f" type="radio" name="tx_formhandler_subscription[gender]" value="f" ###checked_gender_f### />
+				<label for="gender_f">###LLL:gender_female###</label>
+			</div>
+		</div>
+
+		<div class="ym-fbox-text ###is_error_first_name###">
+			###error_first_name###
+			<label for="firstname">###LLL:first_name### ###required_first_name###</label>
+			<input id="firstname" type="text" name="tx_formhandler_subscription[first_name]" value="###value_first_name###" />
+		</div>
+
+		<div class="ym-fbox-text ###is_error_last_name###">
+			###error_last_name###
+			<label for="lastname">###LLL:last_name### ###required_last_name###</label>
+			<input id="lastname" type="text" name="tx_formhandler_subscription[last_name]" value="###value_last_name###" />
+		</div>
+
+		<div class="ym-fbox-text ###is_error_email###">
+			###error_email###
+			<label for="email">###LLL:email### ###required_email###</label>
+			<input id="email" type="text" name="tx_formhandler_subscription[email]" value="###value_email###" />
+		</div>
+
+		<p>###LLL:required_fields###</p>
+
+		<div class="ym-fbox-button">
+			<input type="submit" value="###LLL:submit###" ###submit_nextStep### />
+		</div>
+
+	</form>
+
+</div>
+<!-- ###TEMPLATE_FORM1### end -->
+
+
+<!-- ###TEMPLATE_FORM1_SUBSCRIPTION_CONFIRMED### begin -->
+<!-- ###TEMPLATE_FORM1_SUBSCRIPTION_CONFIRMED### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### begin -->
+
+###LLL:request_subscription_email_user_plain_new_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### begin -->
+
+###LLL:request_subscription_email_user_plain_unconfirmed_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### begin -->
+
+###LLL:request_subscription_email_user_plain_confirmed_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### end -->
+
+
+</body>
+</html>
