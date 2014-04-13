@@ -134,6 +134,7 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 			$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'redirectPage');
 			if ($redirectPage) {
 				$this->utilityFuncs->doRedirect($redirectPage, $this->settings['correctRedirectUrl'], $this->settings['additionalParams.']);
+				exit;
 			}
 		} catch(Exception $e) {
 
@@ -145,6 +146,7 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 			$redirectPage = $this->utilityFuncs->getSingle($this->settings, 'errorRedirectPage');
 			if ($redirectPage) {
 				$this->utilityFuncs->doRedirect($redirectPage, $this->settings['correctRedirectUrl'], $this->settings['additionalParams.']);
+				exit;
 			} else {
 				throw new Exception($e->getMessage());
 			}
