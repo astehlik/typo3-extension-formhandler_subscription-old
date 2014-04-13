@@ -51,4 +51,7 @@ plugin.formhandler_subscription {
 
 		# cat=plugin.formhandler_subscription; type=options[yaml3,yaml4]; label=Temlate theme: Depending on the theme different classes / HTML templates will be used
 	templateTheme = yaml3
+
+		# cat=plugin.formhandler_subscription; type=check; label=Update database timestamps: If TRUE the tstamp fields in the database will be updated whenever a record is changed.
+	updateDatabaseTimestamps = 0
 }

@@ -179,8 +179,19 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		$uidField = $authCodeData['reference_table_uid_field'];
 		$uid = $authCodeData['reference_table_uid'];
 		$hiddenField = $authCodeData['reference_table_hidden_field'];
+		$updateArray = array($hiddenField => 0);
 
-		$enableQuery = $this->typo3Db->UPDATEquery($updateTable, $uidField . '=' . $uid, array($hiddenField => 0));
+		if (
+			isset($this->settings['updateTimestampOnRecordActivation'])
+			&& $this->settings['updateTimestampOnRecordActivation']
+			&& isset($GLOBALS['TCA'][$updateTable]['ctrl']['tstamp'])
+			&& !empty($GLOBALS['TCA'][$updateTable]['ctrl']['tstamp'])
+		) {
+			$tstampField = $GLOBALS['TCA'][$updateTable]['ctrl']['tstamp'];
+			$updateArray[$tstampField] = $GLOBALS['EXEC_TIME'];
+		}
+
+		$enableQuery = $this->typo3Db->UPDATEquery($updateTable, $uidField . '=' . $uid, $updateArray);
 		$this->utilityFuncs->debugMessage('sql_request', array($enableQuery));
 		$enableResult = $this->typo3Db->sql_query($enableQuery);
 		if (!$enableResult) {
@@ -188,4 +199,3 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 		}
 	}
 }
-?>

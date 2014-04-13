@@ -154,6 +154,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		preProcessors.10.class = Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB
 		preProcessors.10.config {
+			updateTimestampOnRecordActivation = {$plugin.formhandler_subscription.updateDatabaseTimestamps}
 			errorRedirectPage = {$plugin.formhandler_subscription.authCodeInvalidPID}
 		}
 	}
@@ -370,3 +371,28 @@ plugin.Tx_Formhandler.settings.predef {
 		}
 	}
 }
+
+[globalVar = LIT:1 = {$plugin.formhandler_subscription.updateDatabaseTimestamps}]
+plugin.Tx_Formhandler.settings.predef {
+
+	formhandler_subscription_request_subscription.finishers {
+		1.config.finishersNewSubscriber.10.config.fields.tstamp.special = sub_tstamp
+	}
+
+	formhandler_subscription_request_subscription_directmailcategories.finishers {
+		1.config.finishersNewSubscriber.10.config.fields.tstamp.special = sub_tstamp
+	}
+
+	formhandler_subscription_update_subscription.finishers {
+		20.config.fields.tstamp.special = sub_tstamp
+	}
+
+	formhandler_subscription_update_subscription_directmailcategories.finishers {
+		20.config.fields.tstamp.special = sub_tstamp
+	}
+
+	formhandler_subscription_request_subscription_ajax.finishers {
+		1.config.finishersNewSubscriber.10.config.tstamp.special = sub_tstamp
+	}
+}
+[global]
