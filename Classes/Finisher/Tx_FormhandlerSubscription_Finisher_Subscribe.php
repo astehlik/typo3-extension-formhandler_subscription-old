@@ -132,11 +132,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	 * @return array
 	 */
 	protected function addDefaultComponentConfig($conf) {
-		if (!$conf['langFiles']) {
-			$conf['langFiles'] = $this->langFiles;
-		}
-
-			//@TODO: Check if this is still needed since these values are read from $this->globals most of the time
+		$conf['langFiles'] = $this->settings['langFiles'];
 		$conf['formValuesPrefix'] = $this->settings['formValuesPrefix'];
 		$conf['templateSuffix'] = $this->settings['templateSuffix'];
 		return $conf;
