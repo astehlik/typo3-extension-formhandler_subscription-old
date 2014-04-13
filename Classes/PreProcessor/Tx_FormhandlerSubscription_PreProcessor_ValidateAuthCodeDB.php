@@ -95,24 +95,38 @@ class Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB extends Tx_Form
 
 				case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ACCESS_FORM:
 
-						// Make the auth code available in the form so that it can be
-						// submitted as a hidden field
+					// Make the auth code available in the form so that it can be
+					// submitted as a hidden field
 					$this->gp['authCode'] = $authCode;
 
-						// Make the auth code data and the auth code record data available
-						// so that it can be displayed to the user
+					// Make the auth code data available so that it can be displayed to the user
 					$this->gp['authCodeData'] = $authCodeData;
 
-					$authCodeRecordData = $this->utils->getAuthCodeRecordFromDB($authCodeData);
-					$this->gp['authCodeRecord'] = $authCodeRecordData;
+					switch ($authCodeData['type']) {
 
-					if (intval($this->settings['mergeRecordDataToGP'])) {
-						$this->gp = array_merge($this->gp, $authCodeRecordData);
+						// for independent records we do not need to load the auth code record data
+						case Tx_FormhandlerSubscription_Utils_AuthCode::TYPE_INDEPENDENT:
+							break;
+
+						// to be backward compatible auth codes with an invalid type will behave like
+						// record auth codes
+						case Tx_FormhandlerSubscription_Utils_AuthCode::TYPE_RECORD:
+						default:
+
+							// Make the auth code  record data available so that it can be displayed to the user
+							$authCodeRecordData = $this->utils->getAuthCodeRecordFromDB($authCodeData);
+							$this->gp['authCodeRecord'] = $authCodeRecordData;
+
+							if (intval($this->settings['mergeRecordDataToGP'])) {
+								$this->gp = array_merge($this->gp, $authCodeRecordData);
+							}
+
+							break;
 					}
 
-						// Store the authCode in the session so that the user can use it
-						// on different pages without the need to append it as a get
-						// parameter everytime
+					// Store the authCode in the session so that the user can use it
+					// on different pages without the need to append it as a get
+					// parameter everytime
 					$this->utils->storeAuthCodeInSession($authCode);
 					break;
 			}

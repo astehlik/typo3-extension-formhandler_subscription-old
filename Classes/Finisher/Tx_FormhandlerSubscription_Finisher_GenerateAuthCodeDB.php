@@ -10,6 +10,8 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Generates an auth code and stores it in the database
  *
@@ -84,7 +86,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		if (!$this->settings['table']) {
 			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('table');
 		} else {
-			$this->table = $this->utilityFuncs->getSingle($this->settings, 'table');
+			$this->table = (string)$this->utilityFuncs->getSingle($this->settings, 'table');
 		}
 
 		if ($this->settings['uidField']) {
@@ -157,7 +159,16 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 			$this->globals->setFormValuesPrefix($this->settings['overrideFormValuesPrefix']);
 		}
 
-		parent::process();
+		$independentMode = FALSE;
+		if ($this->settings['independentMode']) {
+			$independentMode = $this->utilityFuncs->getSingle($this->settings, 'independentMode');
+		}
+
+		if ($independentMode) {
+			$this->generateRecordIndependentAuthCode();
+		} else {
+			parent::process();
+		}
 
 		$this->generateTinyUrl();
 
@@ -203,18 +214,79 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	}
 
 	/**
+	 * Generates an auth code that is independent from a database record.
+	 *
+	 * @throws Tx_FormhandlerSubscription_Exceptions_MissingSettingException
+	 */
+	protected function generateRecordIndependentAuthCode() {
+
+		$identifier = '';
+		$context = '';
+
+		if ($this->settings['identifier']) {
+			$identifier = trim($this->utilityFuncs->getSingle($this->settings, 'identifier'));
+		}
+
+		if (empty($identifier)) {
+			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('identifier');
+		}
+
+		if ($this->settings['context']) {
+			$context = trim($this->utilityFuncs->getSingle($this->settings, 'context'));
+		}
+
+		if (empty($context)) {
+			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('context');
+		}
+
+		$authCode = $this->utils->generateTableIndependentAuthCode($identifier, $context);
+		$this->gp['generated_authCode'] = $authCode;
+
+		// Looking for the page, which should be used for the authCode Link:
+		// first look for TS-setting 'authCodePage'
+		// second look for redirect_page-setting
+		// third use current page
+		if (isset($this->settings['authCodePage'])) {
+			$authCodePage = $this->utilityFuncs->getSingle($this->settings, 'authCodePage');
+		} else {
+			$authCodePage = $this->utilityFuncs->pi_getFFvalue($this->cObj->data['pi_flexform'], 'redirect_page', 'sMISC');
+		}
+		if (!$authCodePage) {
+			$authCodePage = $GLOBALS['TSFE']->id;
+		}
+
+		// Create the parameter-array for the authCode Link
+		$paramsArray = array('authCode' => $authCode);
+
+		// If we have set a formValuesPrefix, add it to the parameter-array
+		$formValuesPrefix = $this->globals->getFormValuesPrefix();
+		if (!empty($formValuesPrefix)) {
+			$paramsArray = array($formValuesPrefix => $paramsArray);
+		}
+
+		// Create the link, using typolink function, use baseUrl if set, else use t3lib_div::getIndpEnv('TYPO3_SITE_URL')
+		$url = $this->cObj->getTypoLink_URL($authCodePage, $paramsArray);
+		$tmpArr = parse_url($url);
+		if (empty($tmpArr['scheme'])) {
+			$url = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . ltrim($url, '/');
+		}
+
+		$this->gp['authCodeUrl'] = $url;
+	}
+
+	/**
 	 * Creates a tiny url if enabled in configuration and extension
 	 * is available
 	 */
 	protected function generateTinyUrl() {
 
 
-		if (!($this->settings['generateTinyUrl'] && t3lib_extMgm::isLoaded('tinyurls'))) {
+		if (!($this->settings['generateTinyUrl'] && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('tinyurls'))) {
 			return;
 		}
 
 		if (!isset($this->tinyUrlApi)) {
-			$this->tinyUrlApi = t3lib_div::makeInstance('Tx_Tinyurls_TinyUrl_Api');
+			$this->tinyUrlApi = GeneralUtility::makeInstance('Tx_Tinyurls_TinyUrl_Api');
 		}
 
 		$this->tinyUrlApi->setDeleteOnUse(1);
@@ -226,4 +298,3 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 	}
 }
-?>

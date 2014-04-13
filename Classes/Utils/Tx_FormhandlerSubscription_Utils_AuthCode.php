@@ -18,6 +18,9 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	const ACTION_ENABLE_RECORD = 'enableRecord';
 	const ACTION_ACCESS_FORM = 'accessForm';
 
+	const TYPE_RECORD = 'record';
+	const TYPE_INDEPENDENT = 'independent';
+
 	/**
 	 * Globals of the formhandler extension
 	 *
@@ -139,6 +142,21 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	}
 
 	/**
+	 * Clears all auth codes that match the given identifier for the given context
+	 *
+	 * @param string $identifier
+	 * @param string $context
+	 */
+	public function clearTableIndependentAuthCodes($identifier, $context) {
+
+		$this->typo3Db->exec_DELETEquery(
+			$this->authCodeTable,
+				'identifier=' .  $this->typo3Db->fullQuoteStr($identifier, $this->authCodeTable) .
+				'AND identifier_context=' . $this->typo3Db->fullQuoteStr($context, $this->authCodeTable)
+		);
+	}
+
+	/**
 	 * Removes all auth codes that reference the given record
 	 *
 	 * @param array $authCodeRow
@@ -197,7 +215,57 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 			'reference_table_hidden_field' => $hiddenField,
 			'action' => $action,
 			'serialized_auth_data' => $serializedRowData,
-			'auth_code' => $authCode
+			'auth_code' => $authCode,
+			'type' => static::TYPE_RECORD,
+		);
+
+		$this->typo3Db->exec_INSERTquery(
+			$this->authCodeTable,
+			$authCodeInsertData
+		);
+
+		return $authCode;
+	}
+
+	/**
+	 * Generates an auth code for accessing a form that is independent from
+	 * any table records but only needs an identifier and a context name for that
+	 * identifier.
+	 *
+	 * The identifier should be unique in the given context.
+	 *
+	 * @param $identifier
+	 * @param $context
+	 * @param null $additionalData
+	 * @return string
+	 */
+	public function generateTableIndependentAuthCode($identifier, $context, $additionalData = NULL) {
+
+		$authCodeData = array(
+			'identifier' => $identifier,
+			'context' => $context,
+		);
+
+		if (isset($additionalData)) {
+			$authCodeData['additionalData'] = $additionalData;
+		}
+
+		$serializedRowData = serialize($authCodeData);
+		$authCode = t3lib_div::getRandomHexString(16);
+		$authCode = md5($serializedRowData . $authCode);
+		$time = time();
+
+		$this->clearTableIndependentAuthCodes($identifier, $context);
+
+		$authCodeInsertData = array(
+			'pid' => '',
+			'tstamp' => $time,
+			'identifier' => $identifier,
+			'identifier_context' => $context,
+			'action' => static::ACTION_ACCESS_FORM,
+			'serialized_auth_data' => $serializedRowData,
+			'auth_code' => $authCode,
+			'type' => static::TYPE_INDEPENDENT,
 		);
 
 		$this->typo3Db->exec_INSERTquery(

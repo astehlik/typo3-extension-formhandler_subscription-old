@@ -93,7 +93,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			$result = $this->runFinishers($this->settings['finishersNewSubscriber.']);
 		} else {
 
-			$subscriberData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($existingSubscriberResult);
+			$subscriberData = $this->getDatabaseConnection()->sql_fetch_assoc($existingSubscriberResult);
 
 				// This is needed for generating an auth code for the
 				// subscriber record, normally these variables are set
@@ -148,7 +148,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	 * will return true
 	 *
 	 * @param string $selectConfigKey
-	 * @return pointer
+	 * @return boolean|\mysqli_result|object MySQLi result object / DBAL object
 	 */
 	protected function getRecordsFromDatabase($selectConfigKey) {
 
@@ -173,9 +173,9 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 		$GLOBALS['TSFE']->showHiddenRecords = $currentShowHiddenSetting;
 
 		$this->utilityFuncs->debugMessage('sql_request', array($query));
-		$res = $GLOBALS['TYPO3_DB']->sql_query($query);
-		if ($GLOBALS['TYPO3_DB']->sql_error()) {
-			$this->utilityFuncs->debugMessage('error', array($GLOBALS['TYPO3_DB']->sql_error()), 3);
+		$res = $this->getDatabaseConnection()->sql_query($query);
+		if ($this->getDatabaseConnection()->sql_error()) {
+			$this->utilityFuncs->debugMessage('error', array($this->getDatabaseConnection()->sql_error()), 3);
 		}
 
 		return $res;
@@ -200,6 +200,8 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 				if (is_array($tsConfig) && strlen($className) > 0) {
 					if (intval($this->utilityFuncs->getSingle($tsConfig, 'disable')) !== 1) {
 
+						/** @var Tx_Formhandler_AbstractComponent $finisher */
+						/** @noinspection PhpVoidFunctionResultUsedInspection */
 						$finisher = $this->componentManager->getComponent($className);
 						$tsConfig['config.'] = $this->addDefaultComponentConfig($tsConfig['config.']);
 						$finisher->init($this->gp, $tsConfig['config.']);
@@ -238,11 +240,17 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 	/**
 	 * Returns true if the subscriber already exists in the database
 	 *
-	 * @param pointer $res
+	 * @param resource boolean|\mysqli_result|object MySQLi result object / DBAL object
 	 * @return bool
 	 */
 	protected function recordExists($res) {
-		return ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0);
+		return ($res && $this->getDatabaseConnection()->sql_num_rows($res) > 0);
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+	 */
+	protected function getDatabaseConnection() {
+		return $GLOBALS['TYPO3_DB'];
 	}
 }
-?>
