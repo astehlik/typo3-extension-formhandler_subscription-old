@@ -1,5 +1,5 @@
 {
-	"name": "astehlik-typo3-extension/formhandler-subscription",
+	"name": "de-swebhosting-typo3-extension/formhandler-subscription",
 	"description": "(Un-)Subscribe functionality for formhandler",
 	"type": "typo3-cms-extension",
 	"version": "0.4.2",
