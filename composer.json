@@ -2,7 +2,7 @@
 	"name": "de-swebhosting-typo3-extension/formhandler-subscription",
 	"description": "(Un-)Subscribe functionality for formhandler",
 	"type": "typo3-cms-extension",
-	"version": "0.4.2",
+	"version": "0.5.0",
 	"license": "GPL-3.0+",
 	"replace": {
 		"formhandler_subscription": "self.version"
