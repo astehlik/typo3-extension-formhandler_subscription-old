@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Provides additional classes for the formhandler extension to build (newsletter) subscribe and modify / unsubscripe forms. It comes with some YAML based example templates.',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '0.5.0',
+	'version' => '0.6.0',
 	'state' => 'stable',
 	'uploadfolder' => 0,
 	'createDirs' => '',
@@ -25,7 +25,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'constraints' => array(
 		'depends' => array(
 			'php' => '5.2.0-0.0.0',
-			'typo3' => '4.5.0-6.2.99',
+			'typo3' => '6.2.1-6.2.99',
 			'formhandler' => '1.4.0-0.0.0',
 		),
 		'conflicts' => array(),
@@ -34,7 +34,4 @@ $EM_CONF[$_EXTKEY] = array(
 			'tinyurls' => '0.0.1-0.0.0',
 		),
 	),
-	'suggests' => array(),
 );
-
-?>
