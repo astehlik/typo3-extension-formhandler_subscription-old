@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Exceptions;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -13,17 +14,27 @@
 /**
  * This exception is used when a required setting is missing
  */
-class Tx_FormhandlerSubscription_Exceptions_MissingSettingException extends Tx_FormhandlerSubscription_Exceptions_AbstractException {
+class MissingSettingException extends AbstractException {
 
+	/**
+	 * The name of the missing section.
+	 *
+	 * @var string
+	 */
 	protected $missingSetting;
 
+	/**
+	 * @param string $missingSetting
+	 */
 	public function __construct($missingSetting) {
 		$this->missingSetting = $missingSetting;
 		parent::__construct('A required setting is missing: ' . $missingSetting);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getMissingSetting() {
 		return $this->missingSetting;
 	}
-
 }

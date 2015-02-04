@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -9,6 +10,8 @@
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
 
 /**
  * This finisher checks if a subscriber exists and calls different sub-finishers
@@ -26,7 +29,7 @@
  * Tx_Formhandler_Finisher_GenerateAuthCode do it's work
  *
  */
-class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_AbstractFinisher {
+class Subscribe extends FormhandlerAbstractFinisher {
 
 	/**
 	 * The database field that contains the uid of the
@@ -65,7 +68,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 		parent::init($gp, $settings);
 
 		if (!$this->settings['subscribersTable']) {
-			throw new Exception('The subscribers table needs to be specified');
+			throw new \Exception('The subscribers table needs to be specified');
 		} else {
 			$this->subscribersTable = $this->utilityFuncs->getSingle($this->settings, 'subscribersTable');
 		}
@@ -95,16 +98,16 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 
 			$subscriberData = $this->getDatabaseConnection()->sql_fetch_assoc($existingSubscriberResult);
 
-				// This is needed for generating an auth code for the
-				// subscriber record, normally these variables are set
-				// by Tx_Formhandler_Finisher_DB
+			// This is needed for generating an auth code for the
+			// subscriber record, normally these variables are set
+			// by Tx_Formhandler_Finisher_DB
 			$this->gp['saveDB'][] = array(
 				'table' => $this->subscribersTable,
 				'uidField' => $this->uidField,
 				'uid' => $subscriberData[$this->uidField],
 			);
 
-				// make subscriber data available in the the gp array
+			// make subscriber data available in the the gp array
 			$this->gp['subscriberData'] = $subscriberData;
 
 			$confirmedSubscriberResult = $this->getRecordsFromDatabase('checkConfirmedSelect');
@@ -150,7 +153,7 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 
 		$selectConfig = $this->settings[$selectConfigKey . '.'];
 
-			// Backup showHiddenRecordsSetting
+		// Backup showHiddenRecordsSetting
 		$currentShowHiddenSetting = $GLOBALS['TSFE']->showHiddenRecords;
 
 		if (intval($selectConfig['showHidden'])) {
@@ -159,13 +162,11 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 			$GLOBALS['TSFE']->showHiddenRecords = 0;
 		}
 
-		/**
-		 * @var tslib_cObj $cObj
-		 */
+		/** @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $cObj */
 		$cObj = $this->globals->getCObj();
 		$query = $cObj->getQuery($this->subscribersTable, $selectConfig);
 
-			// Restore showHiddenRecords setting
+		// Restore showHiddenRecords setting
 		$GLOBALS['TSFE']->showHiddenRecords = $currentShowHiddenSetting;
 
 		$this->utilityFuncs->debugMessage('sql_request', array($query));
@@ -196,16 +197,16 @@ class Tx_FormhandlerSubscription_Finisher_Subscribe extends Tx_Formhandler_Abstr
 				if (is_array($tsConfig) && strlen($className) > 0) {
 					if (intval($this->utilityFuncs->getSingle($tsConfig, 'disable')) !== 1) {
 
-						/** @var Tx_Formhandler_AbstractComponent $finisher */
+						/** @var \Tx_Formhandler_AbstractComponent $finisher */
 						/** @noinspection PhpVoidFunctionResultUsedInspection */
 						$finisher = $this->componentManager->getComponent($className);
 						$tsConfig['config.'] = $this->addDefaultComponentConfig($tsConfig['config.']);
 						$finisher->init($this->gp, $tsConfig['config.']);
 						$finisher->validateConfig();
 
-							//if the finisher returns HTML (e.g. Tx_Formhandler_Finisher_SubmittedOK)
+						//if the finisher returns HTML (e.g. Tx_Formhandler_Finisher_SubmittedOK)
 						if (intval($this->utilityFuncs->getSingle($tsConfig['config.'], 'returns')) === 1) {
-							$returnValue =  $finisher->process();
+							$returnValue = $finisher->process();
 							break;
 						} else {
 							$this->gp = $finisher->process();

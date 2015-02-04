@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,10 +11,15 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
+use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
+
 /**
  * Updates data in a mm table
  */
-class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_AbstractFinisher {
+class UpdateMmData extends FormhandlerAbstractFinisher {
 
 	/**
 	 * Array containing all uids that are allowed
@@ -68,14 +74,14 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 	/**
 	 * Auth code related utility functions
 	 *
-	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @var AuthCodeUtils
 	 */
 	protected $utils;
 
 	/**
 	 * TYPO3 database
 	 *
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	protected $typo3Db;
 
@@ -91,7 +97,7 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 		parent::init($gp, $settings);
 
 		$this->typo3Db = $GLOBALS['TYPO3_DB'];
-		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		$this->utils = AuthCodeUtils::getInstance();
 	}
 
 	/**
@@ -108,7 +114,7 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 
 		foreach ($this->foreignUids as $foreignUid) {
 
-			$foreignUid = t3lib_utility_Math::forceIntegerInRange($foreignUid, 0);
+			$foreignUid = MathUtility::forceIntegerInRange($foreignUid, 0);
 
 			if (!$foreignUid) {
 				continue;
@@ -187,17 +193,17 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 			$this->uidForeignField = $uidForeignField;
 		}
 
-		$localUid = $this->utilityFuncs->getSingle($this->settings, 'localUid');
-		$localUid = t3lib_utility_Math::forceIntegerInRange($localUid, 0);
+		$localUid = (string)$this->utilityFuncs->getSingle($this->settings, 'localUid');
+		$localUid = MathUtility::forceIntegerInRange($localUid, 0);
 		if ($localUid) {
 			$this->localUid = $localUid;
 		} else {
 			$this->utilityFuncs->throwException('The local uid could not be determined in the UpdateMmData finisher.');
 		}
 
-			// it would be more flexible to use stdWrap for getting the field value
-			// but stdWrap will always return a string (it will not return an array)
-		$foreignUidsField = $this->utilityFuncs->getSingle($this->settings, 'foreignUidsField');
+		// it would be more flexible to use stdWrap for getting the field value
+		// but stdWrap will always return a string (it will not return an array)
+		$foreignUidsField = (string)$this->utilityFuncs->getSingle($this->settings, 'foreignUidsField');
 		if (array_key_exists($foreignUidsField, $this->gp)) {
 			$foreignUids = $this->gp[$foreignUidsField];
 			if (is_array($foreignUids)) {
@@ -209,7 +215,7 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 		$this->deleteAll = (bool)$this->utilityFuncs->getSingle($this->settings, 'deleteAll');
 
 		$allowedForeignUids = $this->utilityFuncs->getSingle($this->settings, 'allowedForeignUids');
-		$allowedForeignUids = t3lib_div::trimExplode(',', $allowedForeignUids, TRUE);
+		$allowedForeignUids = GeneralUtility::trimExplode(',', $allowedForeignUids, TRUE);
 		if (count($allowedForeignUids)) {
 			$this->allowedForeignUids = $allowedForeignUids;
 		} elseif (!($this->deleteAll || $disableForeignUidCheck)) {
@@ -217,5 +223,3 @@ class Tx_FormhandlerSubscription_Finisher_UpdateMmData extends Tx_Formhandler_Ab
 		}
 	}
 }
-
-?>

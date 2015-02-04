@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,15 +11,19 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
+use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
+
 /**
- * Checks, if a valid auth code was submitted and invalidates it
+ * Checks if the submitted uid matches the one that was stored with the submitted
+ * auth code.
  */
-class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formhandler_AbstractFinisher {
+class ValidateAuthCodeUID extends FormhandlerAbstractFinisher {
 
 	/**
 	 * Auth code related utility functions
 	 *
-	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @var AuthCodeUtils
 	 */
 	protected $utils;
 
@@ -27,16 +32,18 @@ class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formha
 	 *
 	 * @param array $gp
 	 * @param array $settings
+	 * @return void
 	 */
 	public function init($gp, $settings) {
 
 		parent::init($gp, $settings);
 
-		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		$this->utils = AuthCodeUtils::getInstance();
 	}
 
 	/**
-	 * Checks, if a valid auth code was submitted and invalidates it
+	 * Checks, if a valid auth code was submitted and if the submitted uid
+	 * matches the one that was used for generating the auth code
 	 *
 	 * @return array the GET/POST data array
 	 */
@@ -53,11 +60,19 @@ class Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB extends Tx_Formha
 			$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 		}
 
-		$this->utils->clearAuthCodeFromSession();
-		$this->utils->clearAuthCodesByRowData($authCodeData);
-		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
+		$uidGP = $this->utilityFuncs->getSingle($this->settings, 'compareUid');
+		if (!$uidGP) {
+			$uidField = $authCodeData['reference_table_uid_field'];
+			$uidGP = $this->gp[$uidField];
+		}
+
+		$uidGP = intval($uidGP);
+		$uidAuthCode = intval($authCodeData['reference_table_uid']);
+
+		if ($uidGP !== $uidAuthCode) {
+			$this->utilityFuncs->throwException('The submitted uid ' . $uidGP . ' does not match the one the auth code was created for: ' . $uidAuthCode);
+		}
 
 		return $this->gp;
 	}
 }
-?>

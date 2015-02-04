@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\View;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,12 +11,14 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx_Formhandler_View_Mail as FormhandlerMailView;
+
 /**
  * Provides a non htmlspecialchars encoded auth code url marker for plain text mails
  *
  * In plain text mail simply use the ###value_authCodeUrlPlain### marker.
  */
-class Tx_FormhandlerSubscription_View_AuthCodeMail extends Tx_Formhandler_View_Mail {
+class AuthCodeMailView extends FormhandlerMailView {
 
 	/**
 	 * It works like the parent version but it adds an additional marker
@@ -40,5 +43,3 @@ class Tx_FormhandlerSubscription_View_AuthCodeMail extends Tx_Formhandler_View_M
 		return $markers;
 	}
 }
-
-?>

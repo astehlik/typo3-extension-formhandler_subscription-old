@@ -1,4 +1,6 @@
 <?php
+namespace Tx\FormhandlerSubscription\Exceptions;
+
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
  *                                                                        *
@@ -12,6 +14,5 @@
 /**
  * This is the base class for all exceptions of formhandler_subscription
  */
-abstract class Tx_FormhandlerSubscription_Exceptions_AbstractException extends Exception {
-
+abstract class AbstractException extends \Exception {
 }

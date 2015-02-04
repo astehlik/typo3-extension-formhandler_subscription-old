@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,15 +11,18 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
+use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
+
 /**
- * If a valid auth code was submitted the referenced record is deleted from the database
+ * Checks, if a valid auth code was submitted and invalidates it
  */
-class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formhandler_AbstractFinisher {
+class InvalidateAuthCodeDB extends FormhandlerAbstractFinisher {
 
 	/**
 	 * Auth code related utility functions
 	 *
-	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @var AuthCodeUtils
 	 */
 	protected $utils;
 
@@ -32,12 +36,11 @@ class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formha
 
 		parent::init($gp, $settings);
 
-		$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+		$this->utils = AuthCodeUtils::getInstance();
 	}
 
 	/**
-	 * Checks, if a valid auth code was submitted and deletes the referenced record
-	 * from the database
+	 * Checks, if a valid auth code was submitted and invalidates it
 	 *
 	 * @return array the GET/POST data array
 	 */
@@ -54,12 +57,6 @@ class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formha
 			$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 		}
 
-		$markAsDeleted = FALSE;
-		if (intval($this->settings['markAsDeleted'])) {
-			$markAsDeleted = TRUE;
-		}
-		$this->utils->removeAuthCodeRecordFromDB($authCodeData, $markAsDeleted);
-
 		$this->utils->clearAuthCodeFromSession();
 		$this->utils->clearAuthCodesByRowData($authCodeData);
 		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
@@ -67,4 +64,3 @@ class Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord extends Tx_Formha
 		return $this->gp;
 	}
 }
-?>

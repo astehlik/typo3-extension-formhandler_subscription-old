@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Exceptions;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -13,7 +14,7 @@
 /**
  * This exception is used when a setting has an invalid value
  */
-class Tx_FormhandlerSubscription_Exceptions_InvalidSettingException extends Tx_FormhandlerSubscription_Exceptions_AbstractException {
+class InvalidSettingException extends AbstractException {
 
 	/**
 	 * The setting that was invalid
@@ -43,7 +44,4 @@ class Tx_FormhandlerSubscription_Exceptions_InvalidSettingException extends Tx_F
 	public function getInvalidSetting() {
 		return $this->invalidSetting;
 	}
-
 }
-
-?>

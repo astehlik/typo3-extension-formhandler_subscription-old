@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Utils;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,10 +11,13 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Exceptions\InvalidSettingException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * A class providing helper functions for auth codes stored in the database
  */
-class Tx_FormhandlerSubscription_Utils_AuthCode {
+class AuthCodeUtils {
 
 	const ACTION_ENABLE_RECORD = 'enableRecord';
 	const ACTION_ACCESS_FORM = 'accessForm';
@@ -24,7 +28,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	/**
 	 * Globals of the formhandler extension
 	 *
-	 * @var Tx_Formhandler_Globals
+	 * @var \Tx_Formhandler_Globals
 	 */
 	protected $globals;
 
@@ -62,28 +66,28 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
     /**
      * Formhandler utility functions
      *
-     * @var Tx_Formhandler_UtilityFuncs
+     * @var \Tx_Formhandler_UtilityFuncs
      */
 	protected $formhandlerUtils;
 
 	/**
 	 * Stores the current instance of the utils class
 	 *
-	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @var AuthCodeUtils
 	 */
 	static protected  $instance = NULL;
 
 	/**
 	 * TYPO3 Frontend user
 	 *
-	 * @var tslib_feUserAuth
+	 * @var \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
 	 */
 	var $tsfeUser = NULL;
 
 	/**
 	 * TYPO3 database
 	 *
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $typo3Db = NULL;
 
@@ -91,11 +95,11 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 * Singleton for getting the current instance of the utils class
 	 *
 	 * @static
-	 * @return Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @return AuthCodeUtils
 	 */
 	static public function getInstance() {
 		if (self::$instance === NULL) {
-			self::$instance = new Tx_FormhandlerSubscription_Utils_AuthCode();
+			self::$instance = new AuthCodeUtils();
 		}
 		return self::$instance;
 	}
@@ -105,8 +109,8 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 */
 	public function __construct() {
 
-		$this->formhandlerUtils = Tx_Formhandler_UtilityFuncs::getInstance();
-		$this->globals = Tx_Formhandler_Globals::getInstance();
+		$this->formhandlerUtils = \Tx_Formhandler_UtilityFuncs::getInstance();
+		$this->globals = \Tx_Formhandler_Globals::getInstance();
 		$this->typo3Db = $GLOBALS['TYPO3_DB'];
 		$this->tsfeUser = $GLOBALS['TSFE']->fe_user;
 
@@ -173,15 +177,15 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 * Checks if the given action is valid
 	 *
 	 * @param string $action the action that should be checked
-	 * @throws Tx_FormhandlerSubscription_Exceptions_InvalidSettingException if action is invalid
+	 * @throws InvalidSettingException if action is invalid
 	 */
 	public function checkAuthCodeAction($action) {
 		switch ($action) {
-			case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD:
-			case Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ACCESS_FORM:
+			case static::ACTION_ENABLE_RECORD:
+			case static::ACTION_ACCESS_FORM:
 				break;
 			default:
-				throw new Tx_FormhandlerSubscription_Exceptions_InvalidSettingException('action');
+				throw new InvalidSettingException('action');
 				break;
 		}
 	}
@@ -200,7 +204,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	public function generateAuthCode($row, $action, $table, $uidField, $hiddenField) {
 
 		$serializedRowData = serialize($row);
-		$authCode = t3lib_div::getRandomHexString(16);
+		$authCode = GeneralUtility::getRandomHexString(16);
 		$authCode = md5($serializedRowData . $authCode);
 		$time = time();
 
@@ -251,7 +255,7 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		}
 
 		$serializedRowData = serialize($authCodeData);
-		$authCode = t3lib_div::getRandomHexString(16);
+		$authCode = GeneralUtility::getRandomHexString(16);
 		$authCode = md5($serializedRowData . $authCode);
 		$time = time();
 
@@ -292,9 +296,9 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 			// is called
 		$formValuesPrefix = $this->globals->getFormValuesPrefix();
 		if (empty($formValuesPrefix)) {
-			$authCode = t3lib_div::_GP('authCode');
+			$authCode = GeneralUtility::_GP('authCode');
 		} else {
-			$gpArray = t3lib_div::_GP($formValuesPrefix);
+			$gpArray = GeneralUtility::_GP($formValuesPrefix);
 			if (is_array($gpArray) && array_key_exists('authCode', $gpArray)) {
 				$authCode = $gpArray['authCode'];
 			}
@@ -411,8 +415,6 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 		$uidField = $authCodeData['reference_table_uid_field'];
 		$uid = $this->typo3Db->fullQuoteStr($authCodeData['reference_table_uid'], $table);
 
-		t3lib_div::loadTCA($table);
-
 		if ($markAsDeleted && array_key_exists('delete', $GLOBALS['TCA'][$table]['ctrl'])) {
 			$deleteColumn = $GLOBALS['TCA'][$table]['ctrl']['delete'];
 			$fieldValues[$deleteColumn] = 1;
@@ -492,20 +494,19 @@ class Tx_FormhandlerSubscription_Utils_AuthCode {
 	 * deleteExpiredAuthCodesFromDatabase()
 	 *
 	 * @param string $authCodeExpiryTime Time that will be parsed with strtotime
-	 * @throws Exception if string can not be parsed
+	 * @throws \Exception if string can not be parsed
 	 */
 	public function setAuthCodeExpiryTime($authCodeExpiryTime) {
 
 		$authCodeExpiryTimestamp = strtotime($authCodeExpiryTime);
 		if ($authCodeExpiryTimestamp === FALSE) {
-			throw new Exception('An invalid auth code expiry time was provided: ' . $authCodeExpiryTime);
+			throw new \Exception('An invalid auth code expiry time was provided: ' . $authCodeExpiryTime);
 		}
 		if ($authCodeExpiryTimestamp >= time()) {
-			throw new Exception('The auth code expiry time must not be in the future: ' . $authCodeExpiryTime);
+			throw new \Exception('The auth code expiry time must not be in the future: ' . $authCodeExpiryTime);
 		}
 
 		$this->authCodeExpiryTime = $authCodeExpiryTime;
 		$this->authCodeExpiryTimestamp = $authCodeExpiryTimestamp;
 	}
 }
-?>

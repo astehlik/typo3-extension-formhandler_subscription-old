@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\API;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,13 +11,16 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Page\PageRepository;
+
 /**
  * This class can be used independently from the context (e.g. an eID request)
  * for executing subscription logic.
  *
  * It uses the AJAX API of formhandler_subscription.
  */
-class Tx_FormhandlerSubscription_API_SubscriptionAPI {
+class SubscriptionAPI {
 
 	/**
 	 * The page UID where the request will be sent to, if not set
@@ -36,7 +40,7 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 	/**
 	 * TYPO3 database
 	 *
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Dbal\Database\DatabaseConnection
 	 */
 	var $typo3Db = NULL;
 
@@ -51,7 +55,7 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 	/**
 	 * Tries to autodetect the target page UID
 	 *
-	 * @throws RuntimeException If the page id can not be determined
+	 * @throws \RuntimeException If the page id can not be determined
 	 */
 	protected function initializePageUid() {
 
@@ -59,10 +63,8 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 			return;
 		}
 
-		/**
-		 * @var t3lib_pageSelect $pageSelect
-		 */
-		$pageSelect = t3lib_div::makeInstance('t3lib_pageSelect');
+		/**  @var PageRepository $pageSelect */
+		$pageSelect = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
 		$whereStatement = "tt_content.list_type='formhandler_pi1' AND pages.uid=tt_content.pid ";
 		$whereStatement .= 'AND tt_content.pi_flexform LIKE \'%<field index="predefined">%<value index="vDEF">formhandler_subscription_remove_subscription.</value>%</field>%\'';
 		$whereStatement .= $pageSelect->enableFields('pages');
@@ -72,11 +74,11 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 
 
 		if ($contentResult === FALSE) {
-			throw new RuntimeException('Error detecting target PID: ' . $this->typo3Db->sql_error());
+			throw new \RuntimeException('Error detecting target PID: ' . $this->typo3Db->sql_error());
 		}
 
 		if (!$this->typo3Db->sql_num_rows($contentResult)) {
-			throw new RuntimeException('The target PID could not be detected. No active formhandler plugin content element was found.');
+			throw new \RuntimeException('The target PID could not be detected. No active formhandler plugin content element was found.');
 		}
 
 		$row = $this->typo3Db->sql_fetch_row($contentResult);
@@ -122,24 +124,24 @@ class Tx_FormhandlerSubscription_API_SubscriptionAPI {
 	 * @param int $typeNum the page type number that should be used in this request
 	 * @param array $urlParameters this array contains the URL parameters that will be submitted to the AJAX script
 	 * @return array
-	 * @throws RuntimeException If request or the parsing of the response to JSON fails
+	 * @throws \RuntimeException If request or the parsing of the response to JSON fails
 	 */
 	protected function executeRequest($typeNum, $urlParameters) {
 
-		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST');
-		$urlParameters = t3lib_div::implodeArrayForUrl($this->formValuesPrefix, $urlParameters);
+		$url = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+		$urlParameters = GeneralUtility::implodeArrayForUrl($this->formValuesPrefix, $urlParameters);
 
 		$getUrlReport = array();
 		$url = $url . '?id=' . $this->pageUid . '&type=' . $typeNum . $urlParameters;
-		$result = t3lib_div::getUrl($url, 0, FALSE, $getUrlReport);
+		$result = GeneralUtility::getUrl($url, 0, FALSE, $getUrlReport);
 
 		if ($result === FALSE) {
-			throw new RuntimeException('Error fetching URL ' . $url . ': ' . $getUrlReport['message']);
+			throw new \RuntimeException('Error fetching URL ' . $url . ': ' . $getUrlReport['message']);
 		}
 
 		$resultData = json_decode($result);
 		if (!isset($resultData)) {
-			throw new RuntimeException('JSON object could not be parsed from result: ' . $result . ' fetched from ' . $url);
+			throw new \RuntimeException('JSON object could not be parsed from result: ' . $result . ' fetched from ' . $url);
 		}
 
 		return $resultData;

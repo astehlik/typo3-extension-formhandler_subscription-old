@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,6 +11,9 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Exceptions\MissingSettingException;
+use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
+use Tx_Formhandler_Finisher_GenerateAuthCode as FormhandlerAuthCodeFinisher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -22,7 +26,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * At the moment two actions can be authorized with a generated auth code: accessing
  * a form (accessForm) and unhiding the referenced record (enableRecord).
  */
-class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhandler_Finisher_GenerateAuthCode {
+class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 
 	/**
 	 * The action that will be executed when the user provides
@@ -49,7 +53,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	/**
 	 * Tiny URL API
 	 *
-	 * @var Tx_Tinyurls_TinyUrl_Api
+	 * @var \Tx_Tinyurls_TinyUrl_Api
 	 */
 	protected $tinyUrlApi;
 
@@ -63,7 +67,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	/**
 	 * Auth code related utility functions
 	 *
-	 * @var Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @var AuthCodeUtils
 	 */
 	protected $utils;
 
@@ -72,7 +76,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	 *
 	 * @param array $gp
 	 * @param array $settings
-	 * @throws Tx_FormhandlerSubscription_Exceptions_MissingSettingException If not all requires settings have heen set
+	 * @throws MissingSettingException If not all requires settings have heen set
 	 * @return void
 	 */
 	public function init($gp, $settings) {
@@ -80,11 +84,11 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		parent::init($gp, $settings);
 
 		if (!isset($this->utils)) {
-			$this->utils = Tx_FormhandlerSubscription_Utils_AuthCode::getInstance();
+			$this->utils = AuthCodeUtils::getInstance();
 		}
 
 		if (!$this->settings['table']) {
-			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('table');
+			throw new MissingSettingException('table');
 		} else {
 			$this->table = (string)$this->utilityFuncs->getSingle($this->settings, 'table');
 		}
@@ -96,7 +100,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		if (!empty($this->settings['action'])) {
 			$this->action = $this->settings['action'];
 		} else {
-			$this->action = Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD;
+			$this->action = AuthCodeUtils::ACTION_ENABLE_RECORD;
 		}
 
 		$this->utils->checkAuthCodeAction($this->action);
@@ -139,6 +143,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 
 	/**
 	 * Returns the name of the table field that contains the uid of the referenced record
+	 *
 	 * @return string
 	 */
 	public function getUidFieldName() {
@@ -180,7 +185,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	/**
 	 * Injector for auth code utilities
 	 *
-	 * @param $authCodeUtilities Tx_FormhandlerSubscription_Utils_AuthCode
+	 * @param $authCodeUtilities AuthCodeUtils
 	 */
 	public function setAuthCodeUtils($authCodeUtilities) {
 		$this->utils = $authCodeUtilities;
@@ -189,7 +194,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	/**
 	 * Injector for tiny URL API
 	 *
-	 * @param $tinyUrlApi Tx_Tinyurls_TinyUrl_Api
+	 * @param $tinyUrlApi \Tx_Tinyurls_TinyUrl_Api
 	 */
 	public function setTinyUrlApi($tinyUrlApi) {
 		$this->tinyUrlApi = $tinyUrlApi;
@@ -216,7 +221,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 	/**
 	 * Generates an auth code that is independent from a database record.
 	 *
-	 * @throws Tx_FormhandlerSubscription_Exceptions_MissingSettingException
+	 * @throws MissingSettingException
 	 */
 	protected function generateRecordIndependentAuthCode() {
 
@@ -228,7 +233,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		}
 
 		if (empty($identifier)) {
-			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('identifier');
+			throw new MissingSettingException('identifier');
 		}
 
 		if ($this->settings['context']) {
@@ -236,7 +241,7 @@ class Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB extends Tx_Formhand
 		}
 
 		if (empty($context)) {
-			throw new Tx_FormhandlerSubscription_Exceptions_MissingSettingException('context');
+			throw new MissingSettingException('context');
 		}
 
 		$authCode = $this->utils->generateTableIndependentAuthCode($identifier, $context);

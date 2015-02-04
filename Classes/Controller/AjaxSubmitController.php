@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Controller;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,10 +11,12 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx_Formhandler_Controller_Form as FormhandlerFormController;
+
 /**
  * This controller can be used for submitting request via ajax.
  */
-class Tx_FormhandlerSubscription_Controller_AjaxSubmitController extends Tx_Formhandler_Controller_Form {
+class AjaxSubmitController extends FormhandlerFormController {
 
 	/**
 	 * We are always submitting the last step of a form where
@@ -62,4 +65,3 @@ class Tx_FormhandlerSubscription_Controller_AjaxSubmitController extends Tx_Form
 		));
 	}
 }
-?>
