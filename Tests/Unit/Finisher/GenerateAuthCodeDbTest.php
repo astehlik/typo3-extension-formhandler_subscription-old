@@ -1,4 +1,5 @@
 <?php
+namespace Tx\FormhandlerSubscription\Tests\Unit\Finisher;
 
 /*                                                                        *
  * This script belongs to the TYPO3 extension "formhandler_subscription". *
@@ -10,37 +11,49 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\FormhandlerSubscription\Exceptions\InvalidSettingException;
+use Tx\FormhandlerSubscription\Exceptions\MissingSettingException;
+use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Testcase for the finisher that generates an auth code that is stored
  * in the database
  */
-class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest extends Tx_Phpunit_TestCase {
+class GenerateAuthCodeDbTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
 	 * Instance of auth code db finisher
 	 *
-	 * @var Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB
+	 * @var \Tx\FormhandlerSubscription\Finisher\GenerateAuthCodeDB
 	 */
 	protected $authCodeDbFinisher;
 
+	/**
+	 * @var \PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $formhandlerUtilityFuncs;
+
+	/**
+	 * @var array
+	 */
 	protected $defaultSettings = array(
 		'table' => 'testtable',
 	);
 
+	/**
+	 * Initialize the DB auth code finisher class.
+	 */
 	public function setUp() {
 
-		$componentManager = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockComponentManager');
-		$configuration = $this->getMock('Tx_Formhandler_Configuration');
-		$globals = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockGlobals');
-		$utilityFuncs = $this->getMockForAbstractClass('Tx_FormhandlerSubscription_Test_Unit_Fixtures_MockUtilityFuncs');
+		$this->authCodeDbFinisher = $this->getAccessibleMock('Tx\\FormhandlerSubscription\\Finisher\\GenerateAuthCodeDB', array('dummy'), array(), '', FALSE);
 
-		$this->authCodeDbFinisher = t3lib_div::makeInstance(
-			'Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB',
-			$componentManager,
-			$configuration,
-			$globals,
-			$utilityFuncs
-		);
+		$this->formhandlerUtilityFuncs = $this->getMock('stdClass', array('getSingle'));
+		$this->authCodeDbFinisher->_set('utilityFuncs', $this->formhandlerUtilityFuncs);
+
+		/** @var AuthCodeUtils $authCodeUtils */
+		$authCodeUtils = $this->getMock('Tx\\FormhandlerSubscription\\Utils\\AuthCodeUtils', array('dummy'), array(), '', FALSE);
+		$this->authCodeDbFinisher->setAuthCodeUtils($authCodeUtils);
 	}
 
 	/**
@@ -75,6 +88,7 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 
 		$GLOBALS['TCA']['testtable']['ctrl']['enablecolumns']['disabled'] = 'hiddenValueFromTca';
 
+		$this->formhandlerUtilityFuncs->expects($this->once())->method('getSingle')->will($this->returnValue('testtable'));
 		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
 		$hiddenFieldName = $this->authCodeDbFinisher->getHiddenFieldName();
 		$this->assertEquals('hiddenValueFromTca', $hiddenFieldName);
@@ -86,7 +100,7 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 	public function actionDefaultIsEnable() {
 		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
 		$authCodeAction = $this->authCodeDbFinisher->getAuthCodeAction();
-		$this->assertEquals(Tx_FormhandlerSubscription_Utils_AuthCode::ACTION_ENABLE_RECORD, $authCodeAction);
+		$this->assertEquals(AuthCodeUtils::ACTION_ENABLE_RECORD, $authCodeAction);
 	}
 
 	/**
@@ -100,7 +114,7 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 
 		try {
 			$this->authCodeDbFinisher->init(array(), $settings);
-		} catch (Tx_FormhandlerSubscription_Exceptions_InvalidSettingException $invalidSettingException) {
+		} catch (InvalidSettingException $invalidSettingException) {
 			$this->assertEquals('action', $invalidSettingException->getInvalidSetting());
 			return;
 		}
@@ -115,7 +129,7 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 
 		try {
 			$this->authCodeDbFinisher->init(array(), array());
-		} catch (Tx_FormhandlerSubscription_Exceptions_MissingSettingException $missingSettingException) {
+		} catch (MissingSettingException $missingSettingException) {
 			$this->assertEquals('table', $missingSettingException->getMissingSetting());
 			return;
 		}
@@ -128,6 +142,7 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 	 * @test
 	 */
 	public function tableNameIsSet() {
+		$this->formhandlerUtilityFuncs->expects($this->once())->method('getSingle')->will($this->returnValue('testtable'));
 		$this->authCodeDbFinisher->init(array(), $this->defaultSettings);
 		$tableName = $this->authCodeDbFinisher->getTableName();
 		$this->assertEquals('testtable', $tableName);
@@ -151,7 +166,4 @@ class Tx_FormhandlerSubscription_Tests_Unit_Finisher_GenerateAuthCodeDbTest exte
 		$uidFieldName = $this->authCodeDbFinisher->getUidFieldName();
 		$this->assertEquals('testUidFieldName', $uidFieldName);
 	}
-
 }
-
-?>
