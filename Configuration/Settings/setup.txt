@@ -20,12 +20,6 @@ plugin.Tx_Formhandler.settings.predef {
 
 		addErrorAnchors = 0
 
-		additionalIncludePaths {
-			1 = EXT:formhandler_subscription/Classes/Finisher
-			2 = EXT:formhandler_subscription/Classes/PreProcessor
-			3 = EXT:formhandler_subscription/Classes/Controller
-		}
-
 		singleErrorTemplate {
 			totalWrap = <strong class="message">|</strong>
 			singleWrap = |<br />
@@ -69,7 +63,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		finishers {
 
-			1.class = Tx_FormhandlerSubscription_Finisher_Subscribe
+			1.class = Tx\FormhandlerSubscription\Finisher\Subscribe
 			1.config {
 
 				subscribersTable = {$plugin.formhandler_subscription.subscribersTable}
@@ -97,7 +91,7 @@ plugin.Tx_Formhandler.settings.predef {
 						}
 					}
 
-					20.class = Tx_FormhandlerSubscription_Finisher_GenerateAuthCodeDB
+					20.class = Tx\FormhandlerSubscription\Finisher\GenerateAuthCodeDB
 					20.config {
 						table = {$plugin.formhandler_subscription.subscribersTable}
 						selectFields = uid,email
@@ -152,7 +146,7 @@ plugin.Tx_Formhandler.settings.predef {
 		templateFile = {$plugin.formhandler_subscription.templatePath}/{$plugin.formhandler_subscription.templateTheme}/RequestSubscription.html
 		templateSuffix = _SUBSCRIPTION_CONFIRMED
 
-		preProcessors.10.class = Tx_FormhandlerSubscription_PreProcessor_ValidateAuthCodeDB
+		preProcessors.10.class = Tx\FormhandlerSubscription\PreProcessor\ValidateAuthCodeDB
 		preProcessors.10.config {
 			updateTimestampOnRecordActivation = {$plugin.formhandler_subscription.updateDatabaseTimestamps}
 			errorRedirectPage = {$plugin.formhandler_subscription.authCodeInvalidPID}
@@ -217,7 +211,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 				// Make sure the submitted UID matches the one for which the
 				// used auth code was created
-			10.class = Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID
+			10.class = Tx\FormhandlerSubscription\Finisher\ValidateAuthCodeUID
 
 			20.class = Tx_Formhandler_Finisher_DB
 			20.config {
@@ -231,7 +225,7 @@ plugin.Tx_Formhandler.settings.predef {
 				}
 			}
 
-			30.class = Tx_FormhandlerSubscription_Finisher_InvalidateAuthCodeDB
+			30.class = Tx\FormhandlerSubscription\Finisher\InvalidateAuthCodeDB
 
 			40.class = Tx_Formhandler_Finisher_Redirect
 			40.config.redirectPage = {$plugin.formhandler_subscription.updateSubscriptionSuccessPID}
@@ -260,7 +254,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		finishers {
 
-			10.class = Tx_FormhandlerSubscription_Finisher_RemoveAuthCodeRecord
+			10.class = Tx\FormhandlerSubscription\Finisher\RemoveAuthCodeRecord
 
 			20.class = Tx_Formhandler_Finisher_Redirect
 			20.config.redirectPage = {$plugin.formhandler_subscription.removeSubscriptionSuccessPID}
@@ -298,7 +292,7 @@ plugin.Tx_Formhandler.settings.predef {
 			// store the related direct_mail categories the user selected in the database
 		finishers.1.config.finishersNewSubscriber {
 
-			12.class = Tx_FormhandlerSubscription_Finisher_UpdateMmData
+			12.class = Tx\FormhandlerSubscription\Finisher\UpdateMmData
 			12.config {
 				table = sys_dmail_ttaddress_category_mm
 
@@ -360,7 +354,7 @@ plugin.Tx_Formhandler.settings.predef {
 		name = Subscription removal - direct_mail categories
 
 			// make sure the submitted UID matches the UID from the auth code
-		finishers.4.class = Tx_FormhandlerSubscription_Finisher_ValidateAuthCodeUID
+		finishers.4.class = Tx\FormhandlerSubscription\Finisher\ValidateAuthCodeUID
 
 			// use the Tx_FormhandlerSubscription_Finisher_UpdateMmData to remove related mm records
 		finishers.5 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription_directmailcategories.finishers.1.config.finishersNewSubscriber.12
