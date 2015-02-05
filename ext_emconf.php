@@ -27,6 +27,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'php' => '5.2.0-0.0.0',
 			'typo3' => '6.2.1-6.2.99',
 			'formhandler' => '1.4.0-0.0.0',
+			'authcode' => '0.1.0-0.0.0',
 		),
 		'conflicts' => array(),
 		'suggests' => array(

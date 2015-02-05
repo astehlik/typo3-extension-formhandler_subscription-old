@@ -13,6 +13,7 @@ namespace Tx\FormhandlerSubscription\Finisher;
 
 use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
 use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Checks, if a valid auth code was submitted and invalidates it
@@ -27,6 +28,11 @@ class InvalidateAuthCodeDB extends FormhandlerAbstractFinisher {
 	protected $utils;
 
 	/**
+	 * @var \Tx\Authcode\Domain\Repository\AuthCodeRepository
+	 */
+	protected $authCodeRepository;
+
+	/**
 	 * Inits the finisher mapping settings values to internal attributes.
 	 *
 	 * @param array $gp
@@ -37,6 +43,10 @@ class InvalidateAuthCodeDB extends FormhandlerAbstractFinisher {
 		parent::init($gp, $settings);
 
 		$this->utils = AuthCodeUtils::getInstance();
+
+		/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$this->authCodeRepository = $objectManager->get('Tx\\Authcode\\Domain\\Repository\\AuthCodeRepository');
 	}
 
 	/**
@@ -58,7 +68,7 @@ class InvalidateAuthCodeDB extends FormhandlerAbstractFinisher {
 		}
 
 		$this->utils->clearAuthCodeFromSession();
-		$this->utils->clearAuthCodesByRowData($authCodeData);
+		$this->authCodeRepository->clearAssociatedAuthCodes($authCodeData);
 		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
 
 		return $this->gp;

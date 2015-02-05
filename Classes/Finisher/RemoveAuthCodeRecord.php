@@ -13,11 +13,22 @@ namespace Tx\FormhandlerSubscription\Finisher;
 
 use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
 use Tx_Formhandler_AbstractFinisher as FormhandlerAbstractFinisher;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * If a valid auth code was submitted the referenced record is deleted from the database
  */
 class RemoveAuthCodeRecord extends FormhandlerAbstractFinisher {
+
+	/**
+	 * @var \Tx\Authcode\Domain\Repository\AuthCodeRecordRepository
+	 */
+	protected $authCodeRecordRepository;
+
+	/**
+	 * @var \Tx\Authcode\Domain\Repository\AuthCodeRepository
+	 */
+	protected $authCodeRepository;
 
 	/**
 	 * Auth code related utility functions
@@ -37,6 +48,11 @@ class RemoveAuthCodeRecord extends FormhandlerAbstractFinisher {
 		parent::init($gp, $settings);
 
 		$this->utils = AuthCodeUtils::getInstance();
+
+		/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$this->authCodeRecordRepository = $objectManager->get('Tx\\Authcode\\Domain\\Repository\\AuthCodeRecordRepository');
+		$this->authCodeRepository = $objectManager->get('Tx\\Authcode\\Domain\\Repository\\AuthCodeRepository');
 	}
 
 	/**
@@ -47,25 +63,26 @@ class RemoveAuthCodeRecord extends FormhandlerAbstractFinisher {
 	 */
 	public function process() {
 
-		$authCode = $this->utils->getAuthCode();
+		$submittedAuthCode = $this->utils->getAuthCode();
 
-		if (empty($authCode)) {
+		if (empty($submittedAuthCode)) {
 			$this->utilityFuncs->throwException('validateauthcode_insufficient_params');
 		}
 
-		$authCodeData = $this->utils->getAuthCodeDataFromDB($authCode);
-		if (!isset($authCodeData)) {
+		$authCode = $this->utils->getAuthCodeDataFromDB($submittedAuthCode);
+		if (!isset($authCode)) {
 			$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 		}
 
-		$markAsDeleted = FALSE;
+		$forceDeletion = TRUE;
 		if (intval($this->settings['markAsDeleted'])) {
-			$markAsDeleted = TRUE;
+			$forceDeletion = FALSE;
 		}
-		$this->utils->removeAuthCodeRecordFromDB($authCodeData, $markAsDeleted);
+
+		$this->authCodeRecordRepository->removeAssociatedRecord($authCode, $forceDeletion);
+		$this->authCodeRepository->clearAssociatedAuthCodes($authCode);
 
 		$this->utils->clearAuthCodeFromSession();
-		$this->utils->clearAuthCodesByRowData($authCodeData);
 		$this->gp = $this->utils->clearAuthCodeFromGP($this->gp);
 
 		return $this->gp;

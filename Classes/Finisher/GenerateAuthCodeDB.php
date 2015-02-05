@@ -11,6 +11,7 @@ namespace Tx\FormhandlerSubscription\Finisher;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\Authcode\Domain\Enumeration\AuthCodeAction;
 use Tx\FormhandlerSubscription\Exceptions\MissingSettingException;
 use Tx\FormhandlerSubscription\Utils\AuthCodeUtils;
 use Tx_Formhandler_Finisher_GenerateAuthCode as FormhandlerAuthCodeFinisher;
@@ -37,11 +38,21 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 	protected $action;
 
 	/**
+	 * @var \Tx\Authcode\Domain\Repository\AuthCodeRepository
+	 */
+	protected $authCodeRepository;
+
+	/**
 	 * The field that marks the referenced record as hidden
 	 *
 	 * @var string
 	 */
 	protected $hiddenField = '';
+
+	/**
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * The table that contains the records that are referenced
@@ -87,6 +98,14 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 			$this->utils = AuthCodeUtils::getInstance();
 		}
 
+		if (!isset($this->objectManager))  {
+			$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\Extbase\\Object\\ObjectManager');
+		}
+
+		if (!isset($this->authCodeRepository)) {
+			$this->authCodeRepository = $this->objectManager->get('Tx\\Authcode\\Domain\\Repository\\AuthCodeRepository');
+		}
+
 		if (!$this->settings['table']) {
 			throw new MissingSettingException('table');
 		} else {
@@ -98,9 +117,14 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 		}
 
 		if (!empty($this->settings['action'])) {
+			if ($this->settings['action'] === 'accessForm') {
+				$this->utilityFuncs->debugMessage('Using the accessForm action for the GenerateAuthCodeDB finisher is deprecated! Use accessPage instead.', array(), 2);
+				GeneralUtility::deprecationLog('formhandler_subscription: Using the accessForm action for the GenerateAuthCodeDB finisher is deprecated. Use accessPage instead.');
+				$this->settings['action'] = AuthCodeAction::ACCESS_PAGE;
+			}
 			$this->action = $this->settings['action'];
 		} else {
-			$this->action = AuthCodeUtils::ACTION_ENABLE_RECORD;
+			$this->action = AuthCodeAction::RECORD_ENABLE;
 		}
 
 		$this->utils->checkAuthCodeAction($this->action);
@@ -201,21 +225,22 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 	}
 
 	/**
-	 * Creates a new entry in the tx_formhandler_subscription_authcodes table
-	 * and return a hash value to send by email as an auth code.
+	 * Creates a new record auth code and returns a hash value to send by email as an auth code.
 	 *
 	 * @param array $row The submitted form data
 	 * @return string The auth code
 	 */
 	protected function generateAuthCode($row) {
 
-		return $this->utils->generateAuthCode(
-			$row,
-			$this->action,
-			$this->table,
-			$this->uidField,
-			$this->hiddenField
-		);
+		/** @var \Tx\Authcode\Domain\Model\AuthCode $authCode */
+		$authCode = $this->objectManager->get('Tx\\Authcode\\Domain\\Model\\AuthCode');
+
+		$authCode->setReferenceTableUidField($this->uidField);
+		$authCode->setReferenceTableHiddenField($this->hiddenField);
+
+		$this->authCodeRepository->generateRecordAuthCode($authCode, $this->action, $this->table, $row[$this->uidField]);
+
+		return $authCode->getAuthCode();
 	}
 
 	/**
@@ -244,7 +269,11 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 			throw new MissingSettingException('context');
 		}
 
-		$authCode = $this->utils->generateTableIndependentAuthCode($identifier, $context);
+		/** @var \Tx\Authcode\Domain\Model\AuthCode $authCodeRecord */
+		$authCodeRecord = $this->objectManager->get('Tx\\Authcode\\Domain\\Model\\AuthCode');
+		$this->authCodeRepository->generateIndependentAuthCode($authCodeRecord, $identifier, $context);
+		$authCode = $authCodeRecord->getAuthCode();
+
 		$this->gp['generated_authCode'] = $authCode;
 
 		// Looking for the page, which should be used for the authCode Link:
@@ -296,10 +325,9 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 
 		$this->tinyUrlApi->setDeleteOnUse(1);
 		$this->tinyUrlApi->setUrlKey($this->gp['generated_authCode']);
-		$this->tinyUrlApi->setValidUntil($this->utils->getAuthCodeValidityTimestamp());
+		$this->tinyUrlApi->setValidUntil($this->authCodeRepository->getValidUntil()->getTimestamp());
 
 		$url = $this->gp['authCodeUrl'];
 		$this->gp['authCodeUrl'] = $this->tinyUrlApi->getTinyUrl($url);
-
 	}
 }

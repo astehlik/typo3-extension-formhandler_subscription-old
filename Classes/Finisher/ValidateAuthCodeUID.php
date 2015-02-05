@@ -55,19 +55,19 @@ class ValidateAuthCodeUID extends FormhandlerAbstractFinisher {
 			$this->utilityFuncs->throwException('validateauthcode_insufficient_params');
 		}
 
-		$authCodeData = $this->utils->getAuthCodeDataFromDB($authCode);
-		if (!isset($authCodeData)) {
+		$authCodeRecord = $this->utils->getAuthCodeDataFromDB($authCode);
+		if (!isset($authCodeRecord)) {
 			$this->utilityFuncs->throwException('validateauthcode_no_record_found');
 		}
 
 		$uidGP = $this->utilityFuncs->getSingle($this->settings, 'compareUid');
 		if (!$uidGP) {
-			$uidField = $authCodeData['reference_table_uid_field'];
+			$uidField = $authCodeRecord->getReferenceTableUidField();
 			$uidGP = $this->gp[$uidField];
 		}
 
 		$uidGP = intval($uidGP);
-		$uidAuthCode = intval($authCodeData['reference_table_uid']);
+		$uidAuthCode = $authCodeRecord->getReferenceTableUid();
 
 		if ($uidGP !== $uidAuthCode) {
 			$this->utilityFuncs->throwException('The submitted uid ' . $uidGP . ' does not match the one the auth code was created for: ' . $uidAuthCode);

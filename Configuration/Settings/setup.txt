@@ -197,6 +197,7 @@ plugin.Tx_Formhandler.settings.predef {
 
 		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
 		preProcessors.10.config.mergeRecordDataToGP = 1
+		preProcessors.10.config.doNotInvalidateAuthCode = 1
 
 		// Use the same validators as for the subscription request but remove the validation for the email since it can not be updated.
 		validators < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_request_subscription.validators
@@ -238,6 +239,7 @@ plugin.Tx_Formhandler.settings.predef {
 		preProcessors.1.config.1.confirm_removal.defaultValue = 1
 
 		preProcessors.10 < plugin.Tx_Formhandler.settings.predef.formhandler_subscription_confirm_subscription.preProcessors.10
+		preProcessors.10.config.doNotInvalidateAuthCode = 1
 
 		validators {
 			1.class = Tx_Formhandler_Validator_Default
