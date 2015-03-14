@@ -9,7 +9,8 @@
 	},
 	"require": {
 		"typo3": ">=4.5.0",
-		"formhandler": ">=1.4.0"
+		"formhandler": ">=1.4.0",
+		"authcode": ">=0.1.0"
 	},
 	"suggest": {
 		"tt_address": "Store subscriber address records.",
