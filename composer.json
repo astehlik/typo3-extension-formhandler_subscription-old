@@ -7,7 +7,7 @@
 		"formhandler_subscription": "self.version"
 	},
 	"require": {
-		"formhandler": ">=1.4.0",
+		"formhandler": ">=2.0.1",
 		"authcode": ">=0.1.0"
 	},
 	"suggest": {
