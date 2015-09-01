@@ -83,6 +83,11 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 	protected $utils;
 
 	/**
+	 * @var bool
+	 */
+	protected $independentMode = FALSE;
+
+	/**
 	 * Inits the finisher mapping settings values to internal attributes.
 	 *
 	 * @param array $gp
@@ -106,14 +111,20 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 			$this->authCodeRepository = $this->objectManager->get('Tx\\Authcode\\Domain\\Repository\\AuthCodeRepository');
 		}
 
-		if (!$this->settings['table']) {
-			throw new MissingSettingException('table');
-		} else {
-			$this->table = (string)$this->utilityFuncs->getSingle($this->settings, 'table');
+		if ($this->settings['independentMode']) {
+			$this->independentMode = $this->utilityFuncs->getSingle($this->settings, 'independentMode');
 		}
 
-		if ($this->settings['uidField']) {
-			$this->uidField = $this->settings['uidField'];
+		if (!$this->independentMode) {
+			if (!$this->settings['table']) {
+				throw new MissingSettingException('table');
+			} else {
+				$this->table = (string)$this->utilityFuncs->getSingle($this->settings, 'table');
+			}
+
+			if ($this->settings['uidField']) {
+				$this->uidField = $this->settings['uidField'];
+			}
 		}
 
 		if (!empty($this->settings['action'])) {
@@ -188,12 +199,7 @@ class GenerateAuthCodeDB extends FormhandlerAuthCodeFinisher {
 			$this->globals->setFormValuesPrefix($this->settings['overrideFormValuesPrefix']);
 		}
 
-		$independentMode = FALSE;
-		if ($this->settings['independentMode']) {
-			$independentMode = $this->utilityFuncs->getSingle($this->settings, 'independentMode');
-		}
-
-		if ($independentMode) {
+		if ($this->independentMode) {
 			$this->generateRecordIndependentAuthCode();
 		} else {
 			parent::process();

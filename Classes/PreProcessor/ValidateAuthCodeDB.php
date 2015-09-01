@@ -139,6 +139,11 @@ class ValidateAuthCodeDB extends FormhandlerValidateAuthCodePreProcessor {
 					if (intval($this->settings['mergeRecordDataToGP'])) {
 						$this->gp = array_merge($this->gp, $authCodeRecordData);
 					}
+				} elseif ($authCode->getType() == AuthCodeType::INDEPENDENT) {
+					if (!empty($this->settings['mergeIndependentIdentifierToGP'])) {
+						$identifierMapping = (string)$this->settings['mergeIndependentIdentifierToGP'];
+						$this->gp[$identifierMapping] = $authCode->getIdentifier();
+					}
 				}
 
 				// Store the authCode in the session so that the user can use it
