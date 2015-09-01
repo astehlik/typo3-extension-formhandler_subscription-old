@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Request subscription modification</title>
+</head>
+<body>
+
+
+<!-- ###TEMPLATE_FORM1### begin -->
+<div class="tx-formhandler-subscription tx-formhandler-subscription-requestmodification">
+
+	<form method="post" action="###REL_URL###" enctype="multipart/form-data" class="ym-form linearize-form ym-columnar">
+
+		###is_error###
+
+		<div class="form-group ###is_error_email###">
+			###error_email###
+			<label class="control-label" for="email">###LLL:email### ###required_email###</label>
+			<input class="form-control" id="email" type="text" name="tx_formhandler_subscription[email]" value="###value_email###" />
+		</div>
+
+		<p>###LLL:required_fields###</p>
+
+		<div class="form-group">
+			<input class="btn btn-default" type="submit" value="###LLL:submit###" ###submit_nextStep### />
+		</div>
+
+	</form>
+
+</div>
+<!-- ###TEMPLATE_FORM1### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### begin -->
+
+###LLL:request_update_email_user_plain_new_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_NEW_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### begin -->
+
+###LLL:request_update_email_user_plain_unconfirmed_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_UNCONFIRMED_SUBSCRIBER### end -->
+
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### begin -->
+
+###LLL:request_update_email_user_plain_confirmed_subscriber###
+
+<!-- ###TEMPLATE_EMAIL_USER_PLAIN_CONFIRMED_SUBSCRIBER### end -->
+
+</body>
+</html>
