@@ -7,7 +7,7 @@
 		"formhandler_subscription": "self.version"
 	},
 	"require": {
-		"intera-typo3-extension/formhandler": ">=2.0.1",
+		"typoheads/formhandler": ">=2.0.1",
 		"intera-typo3-extension/authcode": ">=0.1.0"
 	},
 	"suggest": {
